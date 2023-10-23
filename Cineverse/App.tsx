@@ -8,32 +8,40 @@ import ProfileView from './Views/MainViews/ProfileView';
 import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
+const ActiveIconColor = "#007BFF"
+const InactiveIconColor = "black"
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator initialRouteName='Explore'>
+      <Tab.Navigator 
+        initialRouteName='Explore'
+        screenOptions={{
+          tabBarInactiveTintColor: "black",
+          tabBarLabelStyle: {fontSize: 11},
+        }}
+      >
         <Tab.Screen name='Explore' component={ExploreView}
           options={{
-            tabBarIcon: () => (
-              <Ionicons name='home-outline' size={20} />
-            )
+            tabBarIcon: ({focused}) => (
+              <Ionicons name='home' size={20} color={focused ? ActiveIconColor : InactiveIconColor} />
+            ),
           }} 
         />
 
         <Tab.Screen name='Search' component={SearchView} 
           options={{
-              tabBarIcon: () => (
-                <Ionicons name='search-outline' size={20} />
-              )
+              tabBarIcon: ({focused}) => (
+                <Ionicons name='search' size={20} color={focused ? ActiveIconColor : InactiveIconColor} />
+              ),
             }} 
           />
 
         <Tab.Screen name='Profile' component={ProfileView} 
           options={{
-            tabBarIcon: () => (
-              <Ionicons name='person-outline' size={20} />
-            )
+            tabBarIcon: ({focused}) => (
+              <Ionicons name='person' size={20} color={focused ? ActiveIconColor : InactiveIconColor} />
+            ),
           }} 
         />
     </Tab.Navigator>
