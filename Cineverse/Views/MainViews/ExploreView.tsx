@@ -1,14 +1,65 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { useState } from 'react';
+import PopularityView from '../SubViews/ExploreSubViews/PopularityView';
+import GenreView from '../SubViews/ExploreSubViews/GenreView'
+import AToZView from '../SubViews/ExploreSubViews/AToZView'
 
-/*
-This is the explore view, the view shown when you launch the app
-This will have the list of movies and the different categorgies to look through
-*/
+//Props
+type ButtonProp = {
+  type: number;
+  title: string;
+  onPress: () => void;
+}
 
+//Variables
+const popularityCategory = "Popularity"
+const aToZCategory = "A-Z"
+const genreCategory = "Genre"
+
+const CategoryButtons = (props: ButtonProp) => {
+  var currentCategory: string;
+  
+  switch(props.type){
+    case(1):
+      currentCategory = genreCategory;
+      break;
+    case(2):
+      currentCategory = aToZCategory;
+      break;
+    default: 
+      currentCategory = popularityCategory
+      break;
+  }
+  return(
+    <View>
+      <TouchableOpacity style={styles.buttonCategory} onPress={props.onPress}>
+        <Text style={styles.buttonTextStyle}>{props.title}</Text>
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+
+//View
 export default function ExploreView() {
-    return (
+  const [currentCategory, setCurrentCategory] = useState(popularityCategory);
+
+  const handleCategoryChange = (category: string) => {
+    setCurrentCategory(category);
+  }  
+  
+  return (
       <View style={styles.container}>
-        <Text>Explore View</Text>
+        <View style={styles.buttonsContainer}>
+          <CategoryButtons title={popularityCategory} type={0} onPress={() => handleCategoryChange(popularityCategory)} />
+          <CategoryButtons title={genreCategory} type={1}  onPress={() => handleCategoryChange(genreCategory)} />
+          <CategoryButtons title={aToZCategory} type={2}  onPress={() => handleCategoryChange(aToZCategory)} />
+        </View>
+        <View>
+        {currentCategory === popularityCategory && <PopularityView />}
+        {currentCategory === genreCategory && <GenreView />}
+        {currentCategory === aToZCategory && <AToZView />}
+        </View>
     </View>
     );
   }
@@ -17,7 +68,26 @@ export default function ExploreView() {
     container: {
       flex: 1,
       backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
+      alignItems: 'flex-start', 
     },
+
+    buttonTextStyle: {
+      textAlign: 'center',
+      color: 'white'
+    },
+    buttonCategory: {
+      backgroundColor: '#333333',
+      width: 80,
+      padding: 5,
+      marginHorizontal: 30,
+      marginVertical: 20,
+      borderRadius: 3,
+    },
+    buttonsContainer: {
+      backgroundColor: '#121212',  //this will end up being removed since background will handle it
+      flexDirection: 'row',
+      width: '100%',
+      justifyContent: 'center',
+    }
+
   });
