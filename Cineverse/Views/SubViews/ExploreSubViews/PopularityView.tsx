@@ -1,10 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import MediaCard from '../MediaCard';
 
 export default function PopularityView() {
   return (
     <View style={styles.container}>
-      <Text>Popularity View</Text>
+      <MediaCard/>
+      <MediaCard/>
+      <MediaCard/>
+      <MediaCard/>   
     </View>
   );
 
@@ -12,7 +16,9 @@ export default function PopularityView() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
-    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    width: '100%',
+    flexWrap: 'wrap',    
   },
 });
