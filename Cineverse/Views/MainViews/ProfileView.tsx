@@ -1,14 +1,17 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import ProfileHeaderComponent from '../../ViewComponents/ProfileComponents/ProfileHeaderComponent';
 
 /*
 This is the Profile view, the view with all the profile
 functionality
 */
 
+
 export default function ProfileView() {
     return (
       <View style={styles.container}>
-        <Text>Profile View</Text>
+        <ProfileHeaderComponent />
     </View>
     );
   }
