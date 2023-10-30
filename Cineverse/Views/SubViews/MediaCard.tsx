@@ -4,7 +4,10 @@ export default function MediaCard() {
 
     return (
     <TouchableOpacity style={styles.mediaContainer}>
-        <Image style={styles.imageStyle} source={require("../../Images/Placeholders/black-panther-poster.jpg")} />
+        <Text>Media Poster</Text>
+        {/* <Image style={styles.imageStyle} 
+        source={require("../../Images/Placeholders/black-panther-poster.jpg")} 
+        /> */}
     </TouchableOpacity>
 
     )
