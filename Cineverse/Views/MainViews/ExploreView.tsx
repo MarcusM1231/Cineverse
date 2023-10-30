@@ -76,15 +76,18 @@ export default function ExploreView() {
       color: 'white'
     },
     buttonCategory: {
-      backgroundColor: '#333333',
-      width: 80,
-      padding: 5,
-      marginHorizontal: 30,
+      marginHorizontal: 15,
       marginVertical: 20,
-      borderRadius: 3,
+      width: 90,
+      textAlign: 'center',
+      backgroundColor: '#333333',
+      color: 'white',
+      padding: 5,
+      borderRadius: 15,
+      overflow: 'hidden',
     },
     buttonsContainer: {
-      backgroundColor: '#121212',  //this will end up being removed since background will handle it
+      //backgroundColor: '#121212',  //this will end up being removed since background will handle it
       flexDirection: 'row',
       width: '100%',
       justifyContent: 'center',
