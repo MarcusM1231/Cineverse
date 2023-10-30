@@ -9,12 +9,16 @@ type ButtonProp = {
   type: number;
   title: string;
   onPress: () => void;
+  isSelected: boolean;
 }
 
 //Variables
 const popularityCategory = "Popularity"
 const aToZCategory = "A-Z"
 const genreCategory = "Genre"
+
+const ActiveButtonColor = "#007BFF"
+
 
 const CategoryButtons = (props: ButtonProp) => {
   var currentCategory: string;
@@ -32,7 +36,7 @@ const CategoryButtons = (props: ButtonProp) => {
   }
   return(
     <View>
-      <TouchableOpacity style={styles.buttonCategory} onPress={props.onPress}>
+      <TouchableOpacity style={[styles.buttonCategory, {backgroundColor: props.isSelected ? ActiveButtonColor: "#333333"}]} onPress={props.onPress}>
         <Text style={styles.buttonTextStyle}>{props.title}</Text>
       </TouchableOpacity>
     </View>
@@ -51,14 +55,32 @@ export default function ExploreView() {
   return (
       <View style={styles.container}>
         <View style={styles.buttonsContainer}>
-          <CategoryButtons title={popularityCategory} type={0} onPress={() => handleCategoryChange(popularityCategory)} />
-          <CategoryButtons title={genreCategory} type={1}  onPress={() => handleCategoryChange(genreCategory)} />
-          <CategoryButtons title={aToZCategory} type={2}  onPress={() => handleCategoryChange(aToZCategory)} />
+          <CategoryButtons 
+            title={popularityCategory} 
+            type={0} 
+            isSelected={currentCategory === popularityCategory} 
+            onPress={() => handleCategoryChange(popularityCategory)} 
+          />
+
+          <CategoryButtons 
+            title={genreCategory} 
+            type={1} 
+            isSelected={currentCategory === genreCategory} 
+            onPress={() => handleCategoryChange(genreCategory)} 
+          />
+
+          <CategoryButtons 
+            title={aToZCategory} 
+            type={2} 
+            isSelected={currentCategory === aToZCategory}  
+            onPress={() => handleCategoryChange(aToZCategory)} 
+          />
         </View>
+
         <View>
-        {currentCategory === popularityCategory && <PopularityView />}
-        {currentCategory === genreCategory && <GenreView />}
-        {currentCategory === aToZCategory && <AToZView />}
+          {currentCategory === popularityCategory && <PopularityView />}
+          {currentCategory === genreCategory && <GenreView />}
+          {currentCategory === aToZCategory && <AToZView />}
         </View>
     </View>
     );

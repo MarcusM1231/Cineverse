@@ -5,6 +5,9 @@ import ProfileCollectionsView from '../../Views/SubViews/ProfileSubView/ProfileC
 import ProfileCommentsView from '../../Views/SubViews/ProfileSubView/ProfileCommentsView';
 import ProfileLikesView from '../../Views/SubViews/ProfileSubView/ProfileLikesView';
   
+
+const ActiveButtonColor = "#007BFF"
+
 let username = "Username";
 let followersCount  = 3212;
 let followingCunt = 4;
@@ -75,14 +78,20 @@ const ProfileCategories = () => {
         <View>
             <View style={styles.categoriesContainer}>
                 <TouchableOpacity onPress={() => handleCategoryChange(commentCategory)}>
-                    <Text style={styles.categoriesText}>{commentCategory}</Text>
+                    <Text style={[styles.categoriesText, {backgroundColor: currentCategory === commentCategory ? ActiveButtonColor : "#333333"}]}>
+                        {commentCategory}
+                    </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleCategoryChange(collectionCategory)}>
-                    <Text style={styles.categoriesText}>{collectionCategory}</Text>
+                    <Text style={[styles.categoriesText, {backgroundColor: currentCategory === collectionCategory ? ActiveButtonColor : "#333333"}]}>
+                        {collectionCategory}
+                    </Text>
                 </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleCategoryChange(likeCategory)}>
-                    <Text style={styles.categoriesText}>{likeCategory}</Text>
-                    </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleCategoryChange(likeCategory)}>
+                    <Text style={[styles.categoriesText, {backgroundColor: currentCategory === likeCategory ? ActiveButtonColor : "#333333"}]}>
+                        {likeCategory}
+                    </Text>
+                </TouchableOpacity>
             </View>
 
             <View style={styles.categoriesDisplay}>
@@ -153,7 +162,7 @@ export default function ProfileHeaderComponent() {
     //Settings Gear Styles
     gearIcon: {
         fontSize: 27,
-        padding: 10
+        padding: 5
     },
     gearDisplay : {
         alignItems: 'flex-end',
