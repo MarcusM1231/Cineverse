@@ -2,12 +2,32 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import MediaCard from '../MediaCard';
 
-export default function PopularityView() {
+//MediaCard view can be deleted, just here to test scroll bar right now
+export default function ShowView() {
   return (
     <ScrollView contentContainerStyle={styles.container}  showsVerticalScrollIndicator={false}
     showsHorizontalScrollIndicator={false}>
       <View style={styles.content}>
-        <Text>Popularity View</Text>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
+        <MediaCard/>
       </View>  
     </ScrollView>
   );
@@ -22,7 +42,6 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
-    padding: 10
+    justifyContent: 'center'
   },
 });

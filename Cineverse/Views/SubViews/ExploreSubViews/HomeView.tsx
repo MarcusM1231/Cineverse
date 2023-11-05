@@ -2,32 +2,12 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import MediaCard from '../MediaCard';
 
-//MediaCard view can be deleted, just here to test scroll bar right now
-export default function AToZView() {
+export default function HomeView() {
   return (
     <ScrollView contentContainerStyle={styles.container}  showsVerticalScrollIndicator={false}
     showsHorizontalScrollIndicator={false}>
       <View style={styles.content}>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
-        <MediaCard/>
+        <Text>Home View</Text>
       </View>  
     </ScrollView>
   );
@@ -42,6 +22,7 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    padding: 10
   },
 });
