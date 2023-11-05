@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
-import PopularityView from '../SubViews/ExploreSubViews/PopularityView';
-import GenreView from '../SubViews/ExploreSubViews/GenreView'
-import AToZView from '../SubViews/ExploreSubViews/AToZView'
+import HomeView from '../SubViews/ExploreSubViews/HomeView';
+import MovieView from '../SubViews/ExploreSubViews/MovieView'
+import ShowView from '../SubViews/ExploreSubViews/ShowView'
 
 //Props
 type ButtonProp = {
@@ -13,11 +13,12 @@ type ButtonProp = {
 }
 
 //Variables
-const popularityCategory = "Popularity"
-const aToZCategory = "A-Z"
-const genreCategory = "Genre"
+const homeCategory = "Home"
+const showCategory = "TV Shows"
+const movieCategory = "Movies"
 
 const ActiveButtonColor = "#007BFF"
+const InActiveButtonColor = "#333333"
 
 
 const CategoryButtons = (props: ButtonProp) => {
@@ -25,18 +26,18 @@ const CategoryButtons = (props: ButtonProp) => {
   
   switch(props.type){
     case(1):
-      currentCategory = genreCategory;
+      currentCategory = movieCategory;
       break;
     case(2):
-      currentCategory = aToZCategory;
+      currentCategory = showCategory;
       break;
     default: 
-      currentCategory = popularityCategory
+      currentCategory = homeCategory
       break;
   }
   return(
     <View>
-      <TouchableOpacity style={[styles.buttonCategory, {backgroundColor: props.isSelected ? ActiveButtonColor: "#333333"}]} onPress={props.onPress}>
+      <TouchableOpacity style={[styles.buttonCategory, {backgroundColor: props.isSelected ? ActiveButtonColor : InActiveButtonColor}]} onPress={props.onPress}>
         <Text style={styles.buttonTextStyle}>{props.title}</Text>
       </TouchableOpacity>
     </View>
@@ -46,7 +47,7 @@ const CategoryButtons = (props: ButtonProp) => {
 
 //View
 export default function ExploreView() {
-  const [currentCategory, setCurrentCategory] = useState(popularityCategory);
+  const [currentCategory, setCurrentCategory] = useState(homeCategory);
 
   const handleCategoryChange = (category: string) => {
     setCurrentCategory(category);
@@ -56,31 +57,31 @@ export default function ExploreView() {
       <View style={styles.container}>
         <View style={styles.buttonsContainer}>
           <CategoryButtons 
-            title={popularityCategory} 
+            title={homeCategory} 
             type={0} 
-            isSelected={currentCategory === popularityCategory} 
-            onPress={() => handleCategoryChange(popularityCategory)} 
+            isSelected={currentCategory === homeCategory} 
+            onPress={() => handleCategoryChange(homeCategory)} 
           />
 
           <CategoryButtons 
-            title={genreCategory} 
+            title={movieCategory} 
             type={1} 
-            isSelected={currentCategory === genreCategory} 
-            onPress={() => handleCategoryChange(genreCategory)} 
+            isSelected={currentCategory === movieCategory} 
+            onPress={() => handleCategoryChange(movieCategory)} 
           />
 
           <CategoryButtons 
-            title={aToZCategory} 
+            title={showCategory} 
             type={2} 
-            isSelected={currentCategory === aToZCategory}  
-            onPress={() => handleCategoryChange(aToZCategory)} 
+            isSelected={currentCategory === showCategory}  
+            onPress={() => handleCategoryChange(showCategory)} 
           />
         </View>
 
         <View>
-          {currentCategory === popularityCategory && <PopularityView />}
-          {currentCategory === genreCategory && <GenreView />}
-          {currentCategory === aToZCategory && <AToZView />}
+          {currentCategory === homeCategory && <HomeView />}
+          {currentCategory === movieCategory && <MovieView />}
+          {currentCategory === showCategory && <ShowView />}
         </View>
     </View>
     );
@@ -102,7 +103,7 @@ export default function ExploreView() {
       marginVertical: 20,
       width: 90,
       textAlign: 'center',
-      backgroundColor: '#333333',
+      // backgroundColor: '#333333',
       color: 'white',
       padding: 5,
       borderRadius: 15,

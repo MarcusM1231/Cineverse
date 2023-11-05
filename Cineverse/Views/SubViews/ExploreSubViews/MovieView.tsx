@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function GenreView() {
+export default function MovieView() {
   return (
     <View style={styles.container}>
-      <Text>Genre View</Text>
+      <Text>Movie View</Text>
     </View>
   );
 }
