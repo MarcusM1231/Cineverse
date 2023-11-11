@@ -2,14 +2,17 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import MediaCard from '../MediaCard';
 import ViewMoreCard from '../ViewMoreCard';
+import { MediaData } from '../../../Data/MediaData';
+import mediaData from '../../../Data/MediaData';
 
 type MediaCategoryProps = {
-  categoryType: string
+  categoryType: string;
+  mediaData: MediaData[];
 } 
 
 const HomeCategoryView = (props: MediaCategoryProps) => {
-  const mediaCards = Array.from({ length: 6 }, (_, index) => (
-    <MediaCard key={index} />
+  const mediaCards = props.mediaData.map((media, index) => (
+    <MediaCard key={index} media={media} />
   ));
   
   return (
@@ -30,11 +33,11 @@ export default function HomeView() {
     <ScrollView contentContainerStyle={styles.container}  showsVerticalScrollIndicator={false}
     showsHorizontalScrollIndicator={false}>
       <View style={styles.content}>
-        <HomeCategoryView categoryType='For You' />
-        <HomeCategoryView categoryType='Trending' />
-        <HomeCategoryView categoryType='New Release' />
-        <HomeCategoryView categoryType='Recently Updated' />
-        <HomeCategoryView categoryType='A-Z' />
+        <HomeCategoryView categoryType='For You' mediaData={mediaData} />
+        <HomeCategoryView categoryType='Trending' mediaData={mediaData} />
+        <HomeCategoryView categoryType='New Release' mediaData={mediaData} />
+        <HomeCategoryView categoryType='Recently Updated' mediaData={mediaData} />
+        <HomeCategoryView categoryType='A-Z' mediaData={mediaData} />
       </View>  
     </ScrollView>
   );

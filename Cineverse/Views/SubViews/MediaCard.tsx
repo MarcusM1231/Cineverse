@@ -1,11 +1,22 @@
 import { Text, View, TouchableOpacity, StyleSheet, Image} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import {MediaData} from '../../Data/MediaData'
 
-export default function MediaCard() {
+type MediaCardProps = {
+    media: MediaData;
+}
 
+export default function MediaCard({media}: MediaCardProps) {
+const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
+const handleMediaCardPress = () =>{
+    navigation.navigate("CardDetail", {mediaData: media})
+};
     return (
         <View>
-            <TouchableOpacity style={styles.mediaContainer}>
-                <Text>Media Poster</Text>
+            <TouchableOpacity style={styles.mediaContainer} onPress={handleMediaCardPress}>
+                <Text>{media.title}</Text>
             {/* <Image style={styles.imageStyle} 
             source={require("../../Images/Placeholders/black-panther-poster.jpg")} 
             /> */}
