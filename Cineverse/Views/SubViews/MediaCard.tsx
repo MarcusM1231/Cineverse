@@ -1,15 +1,16 @@
-import { Text, View, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet, Image} from "react-native";
 
 export default function MediaCard() {
 
     return (
-    <TouchableOpacity style={styles.mediaContainer}>
-        <Text>Media Poster</Text>
-        {/* <Image style={styles.imageStyle} 
-        source={require("../../Images/Placeholders/black-panther-poster.jpg")} 
-        /> */}
-    </TouchableOpacity>
-
+        <View>
+            <TouchableOpacity style={styles.mediaContainer}>
+                <Text>Media Poster</Text>
+            {/* <Image style={styles.imageStyle} 
+            source={require("../../Images/Placeholders/black-panther-poster.jpg")} 
+            /> */}
+            </TouchableOpacity>
+        </View>
     )
 }
 
