@@ -32,7 +32,7 @@ const styles = StyleSheet.create ({
         borderRadius: 10,
         overflow: 'hidden',
         borderWidth: 2, 
-        borderColor: 'black'
+        borderColor: '#333333'
     },
     imageStyle: {
         width: '100%',

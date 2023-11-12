@@ -6,7 +6,7 @@ import ProfileCommentsView from '../../Views/SubViews/ProfileSubView/ProfileComm
 import ProfileLikesView from '../../Views/SubViews/ProfileSubView/ProfileLikesView';
   
 
-const ActiveButtonColor = "#007BFF"
+const ActiveButtonColor = "#008080"
 
 let username = "Username";
 let followersCount  = 3212;
@@ -126,17 +126,19 @@ export default function ProfileHeaderComponent() {
         flex: 1  
     },
     container: {
-      backgroundColor: '#fff',
+      backgroundColor: '#121212',
       width: '100%'
     },
 
     //Username Styles
     pencilButton: {
-        fontSize: 20
+        fontSize: 20,
+        color: 'white'
     },
     username: {
         fontSize: 27,
         marginRight: 8,
+        color: 'white'
     },
     profileUsernameContainer: {
         flexDirection: 'row',
@@ -162,7 +164,8 @@ export default function ProfileHeaderComponent() {
     //Settings Gear Styles
     gearIcon: {
         fontSize: 27,
-        padding: 5
+        padding: 5,
+        color: 'white'
     },
     gearDisplay : {
         alignItems: 'flex-end',
@@ -178,9 +181,11 @@ export default function ProfileHeaderComponent() {
     followingFollowersNumber: {  
         fontSize: followingFollowersTextSize,
         fontWeight: 'bold',
+        color: 'white'
     },
     followingFollowersText: {
-        fontSize: followingFollowersTextSize
+        fontSize: followingFollowersTextSize,
+        color: 'white'
     },
     followStyle: {
         justifyContent: 'center',
@@ -195,7 +200,7 @@ export default function ProfileHeaderComponent() {
     },
     categoriesText: {
         marginHorizontal: 15,
-        width: 90,
+        width: 95,
         textAlign: 'center',
         backgroundColor: '#333333',
         color: 'white',

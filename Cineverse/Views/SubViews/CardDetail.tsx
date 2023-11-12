@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import ThreadView from "./ThreadView";
 
-const ActiveButtonColor = "#007BFF"
+const ActiveButtonColor = "#008080"
 
 const MediaTypeLabel = ({ mediaType }: { mediaType: number }) =>{
     var mediaText;
@@ -93,30 +93,32 @@ const CardDetailInfo = () => {
             <View style={styles.likesDislikesContainer}>
                 <View style={styles.likesDislikesContainer}>
                     <TouchableOpacity onPress={likeButtonPress} >
-                        <Ionicons style={[styles.likesDislikesIcon, { color: mediaData.likedAlready ? ActiveButtonColor : "black", }]} name="thumbs-up" />
+                        <Ionicons style={[styles.likesDislikesIcon, { color: mediaData.likedAlready ? ActiveButtonColor : "white", }]} name="thumbs-up" />
                     </TouchableOpacity>
                     <Text style={styles.likesDislikesText}>{likes}</Text>
                 </View>
 
                 <View style={styles.likesDislikesContainer}>
                     <TouchableOpacity onPress={dislikeButtonPress}>
-                        <Ionicons style={[styles.likesDislikesIcon, { color: mediaData.dislikedAlready ? 'red' : 'black' }]} name="thumbs-down" />
+                        <Ionicons style={[styles.likesDislikesIcon, { color: mediaData.dislikedAlready ? 'red' : 'white' }]} name="thumbs-down" />
                     </TouchableOpacity>                   
                     <Text style={styles.likesDislikesText}>{mediaData.dislikes}</Text>
                 </View>
             </View>
 
             <View style={styles.summaryContainer}>
-                <Text>{mediaData.mediaSummary}</Text>
+                <Text style={styles.summaryText}>{mediaData.mediaSummary}</Text>
             </View>
 
             <View style={styles.mediaDetails}>
-                <Text>Release Date: {mediaData.releaseDate}</Text>
-                <Text>Rating: {mediaData.rating}</Text>
+                <Text style={styles.summaryText}>Release Date: {mediaData.releaseDate}</Text>
+                <Text style={styles.summaryText}>Rating: {mediaData.rating}</Text>
             </View>
 
+            <View style={styles.horizontalLine}></View>
+
             <View>
-                <Text style={styles.threadsListTitle}>{mediaData.type === 1 ? 'Movie Thread': 'Episdode Threads'}</Text>
+                <Text style={styles.threadsListTitle}>{mediaData.type === 1 ? 'Movie Thread': 'Episdode Threads'}:</Text>
                 <View style={styles.threads}>
                     {threads}
                 </View>
@@ -141,9 +143,10 @@ const styles = StyleSheet.create ({
         flex: 1, 
         paddingTop: 10,  
         paddingLeft: 5,
+        backgroundColor: "#121212"
     },
     scrollContent: {
-        paddingBottom: 80,
+        paddingBottom: 30,
         width: '100%',
     },
     header: {
@@ -157,6 +160,7 @@ const styles = StyleSheet.create ({
         width:'auto',
         maxWidth: 250,
         fontWeight: "bold",
+        color: 'white'
     }, 
     mediaType: {
         marginRight: 10,
@@ -178,7 +182,7 @@ const styles = StyleSheet.create ({
         overflow: 'hidden',
         borderWidth: 2,
         alignSelf: 'center', 
-        borderColor: 'black',
+        borderColor: '#333333',
         marginBottom: 30,
         marginTop: 20
     },
@@ -188,32 +192,46 @@ const styles = StyleSheet.create ({
         resizeMode: 'cover'
     },
     summaryContainer: {
-        width: 380
+        width: 380,
+        backgroundColor: '#333333',
+        alignSelf: 'center',
+        justifyContent: 'center',
+        padding: 15,
+        borderRadius: 20
+    },
+    summaryText: {
+        color: 'white'
     },
     mediaDetails: {
         marginTop: 20,
-        marginBottom: 10
+        marginBottom: 10,
     },
     likesDislikesContainer: {
         flexDirection: "row",
         marginRight: 20,
-        marginBottom: 5,
+        marginBottom: 8,
         alignItems: 'center',
-        width: 50
+        width: 50,
     },
     likesDislikesIcon: {
         fontSize: 20
     },
     likesDislikesText: {
-        fontSize: 16
+        fontSize: 16,
+        color: 'white'
     },
     threadsListTitle: {
-        fontSize: 20
+        fontSize: 20,
+        color: 'white'
     },
     threads: {
         flexDirection: 'row',
-        width: "auto",
         flexWrap: 'wrap',
-        marginTop: 10
+        marginTop: 15,        
     },  
+    horizontalLine: {
+        borderBottomColor: '#333333',
+        borderBottomWidth: 1,   
+        marginVertical: 15,  
+      },
 })

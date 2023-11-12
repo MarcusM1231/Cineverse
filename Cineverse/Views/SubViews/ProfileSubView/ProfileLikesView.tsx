@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function ProfileLikesView() {
     return (
       <View style={styles.container}>
-        <Text>Likes</Text>
+        <Text style={styles.content}>Likes</Text>
     </View>
     );
   }
@@ -14,4 +14,7 @@ export default function ProfileLikesView() {
       padding: 10,
       alignItems: 'center',
     },
+    content: {
+      color: 'white'
+    }
   });

@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
+const ThreadColor = '#008080'
 export default function ThreadView({ episodeNumber }: { episodeNumber: number }) {
     return (
       <View style={styles.container}>
@@ -14,7 +15,7 @@ export default function ThreadView({ episodeNumber }: { episodeNumber: number })
     container: {
         flex: 1,
         paddingHorizontal: 10,
-        paddingVertical: 10
+        paddingVertical: 10, 
     },
     thread: {
         textAlign: 'center',
@@ -22,7 +23,7 @@ export default function ThreadView({ episodeNumber }: { episodeNumber: number })
         height: 40,
         borderRadius: 20,
         overflow: "hidden",
-        backgroundColor: "#007BFF",
+        backgroundColor: ThreadColor,
         textAlignVertical: 'center',
         lineHeight: 40,
         color: 'white'

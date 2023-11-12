@@ -17,7 +17,7 @@ const homeCategory = "Home"
 const showCategory = "TV Shows"
 const movieCategory = "Movies"
 
-const ActiveButtonColor = "#007BFF"
+const ActiveButtonColor = "#008080"
 const InActiveButtonColor = "#333333"
 
 
@@ -90,7 +90,7 @@ export default function ExploreView() {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff',
+      backgroundColor: '#121212',
       alignItems: 'flex-start', 
     },
 
@@ -115,5 +115,4 @@ export default function ExploreView() {
       width: '100%',
       justifyContent: 'center',
     }
-
   });
