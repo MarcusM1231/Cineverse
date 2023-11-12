@@ -16,10 +16,7 @@ const handleMediaCardPress = () =>{
     return (
         <View>
             <TouchableOpacity style={styles.mediaContainer} onPress={handleMediaCardPress}>
-                <Text>{media.title}</Text>
-            {/* <Image style={styles.imageStyle} 
-            source={require("../../Images/Placeholders/black-panther-poster.jpg")} 
-            /> */}
+                <Image style={styles.imageStyle} source={{uri: media.image}} />
             </TouchableOpacity>
         </View>
     )

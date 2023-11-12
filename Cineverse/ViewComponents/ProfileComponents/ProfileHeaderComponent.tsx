@@ -13,7 +13,7 @@ let followersCount  = 3212;
 let followingCunt = 4;
 
 const commentCategory = "Comments";
-const collectionCategory = "Collection";
+const collectionCategory = "Collections";
 const likeCategory = "Likes";
 
 const UsernameDisplay = () => {
@@ -177,21 +177,21 @@ export default function ProfileHeaderComponent() {
     },
     followingFollowersNumber: {  
         fontSize: followingFollowersTextSize,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
     followingFollowersText: {
         fontSize: followingFollowersTextSize
     },
     followStyle: {
-        flexDirection: 'row',
         justifyContent: 'center',
+        flexDirection: 'row',
         marginHorizontal: 10,
     },
 
-    //Categories Styles
     categoriesContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
+        margin: 15
     },
     categoriesText: {
         marginHorizontal: 15,
