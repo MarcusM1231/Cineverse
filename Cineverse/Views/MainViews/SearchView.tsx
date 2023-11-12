@@ -10,7 +10,7 @@ catergories.
 export default function SearchView() {
     return (
       <View style={styles.container}>
-        <Text>Search View</Text>
+        <Text style={{color: 'white'}}>Search View</Text>
     </View>
     );
   }
@@ -18,7 +18,7 @@ export default function SearchView() {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff',
+      backgroundColor: '#121212',
       alignItems: 'center',
       justifyContent: 'center',
     },

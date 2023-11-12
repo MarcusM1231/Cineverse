@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function ProfileCollectionsView() {
     return (
       <View style={styles.container}>
-        <Text>Collections</Text>
+        <Text style={styles.content}>Collections</Text>
     </View>
     );
   }
@@ -14,4 +14,7 @@ export default function ProfileCollectionsView() {
       padding: 10,
       alignItems: 'center',
     },
+    content: {
+      color: 'white'
+    }
   });

@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function ProfileCommentsView() {
     return (
       <View style={styles.container}>
-        <Text>Comments</Text>
+        <Text style={styles.content}>Comments</Text>
       </View>
     );
   }
@@ -14,4 +14,7 @@ export default function ProfileCommentsView() {
       padding: 10,
       alignItems: 'center',
     },
+    content: {
+      color: 'white'
+    }
   });

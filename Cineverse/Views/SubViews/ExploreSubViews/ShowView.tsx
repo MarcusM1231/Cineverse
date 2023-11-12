@@ -1,23 +1,72 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import MediaCard from '../MediaCard';
+import ViewMoreCard from '../ViewMoreCard';
+import { MediaData } from '../../../Data/MediaData';
+import mediaData from '../../../Data/MediaData';
+
+type MediaCategoryProps = {
+  categoryType: string;
+  mediaData: MediaData[];
+} 
+
+const ShowCategoryView = (props: MediaCategoryProps) => {
+  const mediaCards = props.mediaData
+    .filter((media) => media.type === 0)
+    .map((media, index) => <MediaCard key={index} media={media} />);
+  
+  return (
+    <View>
+      <View style={styles.horizontalLine}></View>
+      <Text style={styles.categoryTitle}>{props.categoryType}</Text>      
+      <View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {mediaCards}
+          <ViewMoreCard />
+        </ScrollView>
+      </View>
+    </View>
+  )
+}
 
 export default function ShowView() {
   return (
     <ScrollView contentContainerStyle={styles.container}  showsVerticalScrollIndicator={false}
     showsHorizontalScrollIndicator={false}>
       <View style={styles.content}>
-        <Text>TV Shows</Text>
+        <ShowCategoryView categoryType='For You' mediaData={mediaData} />
+        <ShowCategoryView categoryType='Trending' mediaData={mediaData} />
+        <ShowCategoryView categoryType='New Episodes' mediaData={mediaData} />
+        <ShowCategoryView categoryType='New Series' mediaData={mediaData} />
+        <ShowCategoryView categoryType='Random Shows' mediaData={mediaData} />
       </View>  
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
-    padding: 10,
-    alignItems: 'center',
-  },
   container: {
-
-  }
+    paddingBottom: 80,
+    width: '100%',
+  },
+  content: {
+    flexDirection:"column",
+  },
+  categoryTitle: {
+    fontSize: 20,
+    marginTop: 8,
+    marginLeft: 10,
+    fontWeight: 'bold',
+    color: 'white'
+  },
+  test: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  horizontalLine: {
+    borderBottomColor: '#121212',
+    borderBottomWidth: 1,   
+    marginVertical: 1,  
+  },
 });

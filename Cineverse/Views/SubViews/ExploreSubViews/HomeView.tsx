@@ -11,18 +11,22 @@ type MediaCategoryProps = {
 } 
 
 const HomeCategoryView = (props: MediaCategoryProps) => {
-  const mediaCards = props.mediaData.map((media, index) => (
+  const firstSixMedia = props.mediaData.slice(0, 6);
+
+  const mediaCards = firstSixMedia.map((media, index) => (
     <MediaCard key={index} media={media} />
   ));
   
   return (
     <View>
+      <View style={styles.horizontalLine}></View>
       <Text style={styles.categoryTitle}>{props.categoryType}</Text>      
       <View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {mediaCards}
           <ViewMoreCard />
         </ScrollView>
+        {/* <View style={styles.horizontalLine}></View> */}
       </View>
     </View>
   )
@@ -55,11 +59,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: 8,
     marginLeft: 10,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    color: 'white'
   },
   test: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between'
-  }
+  },
+  horizontalLine: {
+    borderBottomColor: '#121212',
+    borderBottomWidth: 1,   
+    marginVertical: 1,  
+  },
 });

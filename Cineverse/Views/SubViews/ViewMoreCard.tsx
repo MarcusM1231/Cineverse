@@ -5,7 +5,7 @@ export default function ViewMoreCard() {
 
     return (
     <TouchableOpacity style={styles.mediaContainer}>
-        <Text>View More</Text>
+        <Text style={styles.textStyle}>View More</Text>
         <Ionicons name="add" style={styles.iconStyle} />
     </TouchableOpacity>
 
@@ -22,13 +22,14 @@ const styles = StyleSheet.create ({
         borderRadius: 10,
         overflow: 'hidden',
         borderWidth: 2, 
-        borderColor: 'black'
+        borderColor: '#333333',
+        backgroundColor: '#333333'
     },
-    imageStyle: {
-        width: '100%',
-        height: '100%'
+    textStyle: {
+        color: 'white'
     },
     iconStyle: {
-        fontSize: 20
+        fontSize: 20,
+        color: 'white'
     }
 })
