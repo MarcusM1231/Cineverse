@@ -1,28 +1,45 @@
-import { StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ProfileCollectionsView from '../../Views/SubViews/ProfileSubView/ProfileCollectionsView';
 import ProfileCommentsView from '../../Views/SubViews/ProfileSubView/ProfileCommentsView';
 import ProfileLikesView from '../../Views/SubViews/ProfileSubView/ProfileLikesView';
+import firebase from 'firebase/compat';
   
-
 const ActiveButtonColor = "#008080"
-
-let username = "Username";
-let followersCount  = 3212;
-let followingCunt = 4;
 
 const commentCategory = "Comments";
 const collectionCategory = "Collections";
 const likeCategory = "Likes";
 
 const UsernameDisplay = () => {
+    const [username, setUsername] = useState('')
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+          try {
+            const user = firebase.auth().currentUser;
+            if (user) {
+              const userDataSnapshot = await firebase.database().ref(`/users/${user.uid}`).once('value');
+              const userData = userDataSnapshot.val();
+              if (userData && userData.initialData.username) {
+                setUsername(userData.initialData.username);
+              }
+            }
+          } catch (error: any) {
+            console.error('Error fetching user data:', error.message);
+          }
+        };
+    
+        fetchUserData();
+      }, []);
+    
     return (
         <View style={styles.profileUsernameContainer}>
             <Text style={styles.username}>@{username}</Text> 
-            <TouchableOpacity>
+            {/* <TouchableOpacity>
                 <Ionicons name="pencil" style={styles.pencilButton}/>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     )
 }
@@ -37,10 +54,23 @@ const ProfileImage = () =>{
     )
 }
 
+/*
+Right now clicking gear will log user out. Will update this once Settings
+View gets implemented
+*/
 const SettingGear = () => {
+    const handleLogout = async () => {
+        try {
+          await firebase.auth().signOut();
+
+        } catch (error: any) {
+          Alert.alert("Error: ", error.message)
+        }
+      };
+    
     return(
         <View style={styles.gearDisplay}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleLogout}>
                 <Ionicons name='settings' style={styles.gearIcon} />
             </TouchableOpacity>
         </View>
@@ -48,6 +78,32 @@ const SettingGear = () => {
 }
 
 const FollersFollowingCount = () => {
+    const [followersCount, setFollowersCount] = useState(0);
+    const [followingCount, setFollowingCount] = useState(0);
+
+    useEffect(() => {
+        const user = firebase.auth().currentUser;
+        if (user) {
+            const userRef = firebase.database().ref(`/users/${user.uid}`);
+
+            // Attach an event listener for any value changes in the user node
+            const onDataChange = (snapshot: any) => {
+                const userData = snapshot.val();
+                if (userData) {
+                    setFollowersCount(userData.initialData.followers);
+                    setFollowingCount(userData.initialData.following);
+                }
+            };
+
+            userRef.on('value', onDataChange);
+
+            // Return a cleanup function to detach the event listener when component unmounts
+            return () => {
+                userRef.off('value', onDataChange);
+            };
+        }
+    }, []);
+
     return (
         <View style={styles.followingFollowersContainer}>
             <View style={styles.followStyle}>
@@ -59,7 +115,7 @@ const FollersFollowingCount = () => {
         
             <View style={styles.followStyle}>
                 <TouchableOpacity>
-                    <Text style={styles.followingFollowersNumber}>{followingCunt.toString()} </Text>
+                    <Text style={styles.followingFollowersNumber}>{followingCount.toString()} </Text>
                 </TouchableOpacity>
                 <Text style={styles.followingFollowersText}>Following</Text>
             </View>
@@ -67,6 +123,7 @@ const FollersFollowingCount = () => {
     )
 }
 
+//Handles switching between the different categories (Comments, Collections, Likes)
 const ProfileCategories = () => {
     const [currentCategory, setCurrentCategory] = useState(commentCategory);
 
@@ -104,6 +161,7 @@ const ProfileCategories = () => {
     )
 }
 
+//Header 
 export default function ProfileHeaderComponent() {   
     return (
         <View style={styles.profileContainer}>            
@@ -138,12 +196,14 @@ export default function ProfileHeaderComponent() {
     username: {
         fontSize: 27,
         marginRight: 8,
-        color: 'white'
+        color: 'white',
+        fontWeight: 'bold',
     },
     profileUsernameContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+
     },
 
     //Profile Image Styles
