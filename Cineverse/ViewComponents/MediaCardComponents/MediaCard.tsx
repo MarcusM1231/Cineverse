@@ -3,10 +3,12 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {MediaData} from '../../Data/MediaData'
 
+//Props
 type MediaCardProps = {
     media: MediaData;
 }
 
+//Displays media card that appears on explore pages
 export default function MediaCard({media}: MediaCardProps) {
 const navigation = useNavigation<NativeStackNavigationProp<any>>();
 

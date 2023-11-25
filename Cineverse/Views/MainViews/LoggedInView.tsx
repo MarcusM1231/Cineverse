@@ -6,8 +6,9 @@ import { Ionicons } from '@expo/vector-icons';
 import ExploreView from './ExploreView';
 import SearchView from './SearchView';
 import ProfileView from './ProfileView';
-import CardDetail from '../SubViews/CardDetail';
+import CardDetail from '../../ViewComponents/MediaCardComponents/CardDetail';
 
+//Variables
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 const ActiveIconColor = '#008080' 

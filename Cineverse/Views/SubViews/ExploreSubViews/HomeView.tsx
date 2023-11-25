@@ -1,15 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import MediaCard from '../MediaCard';
-import ViewMoreCard from '../ViewMoreCard';
+import MediaCard from '../../../ViewComponents/MediaCardComponents/MediaCard';
+import ViewMoreCard from '../../../ViewComponents/MediaCardComponents/ViewMoreCard';
 import { MediaData } from '../../../Data/MediaData';
 import mediaData from '../../../Data/MediaData';
 
+//Props
 type MediaCategoryProps = {
   categoryType: string;
   mediaData: MediaData[];
 } 
 
+//Displays the first six media cards for each section on home view
 const HomeCategoryView = (props: MediaCategoryProps) => {
   const firstSixMedia = props.mediaData.slice(0, 6);
 
@@ -26,7 +28,6 @@ const HomeCategoryView = (props: MediaCategoryProps) => {
           {mediaCards}
           <ViewMoreCard />
         </ScrollView>
-        {/* <View style={styles.horizontalLine}></View> */}
       </View>
     </View>
   )
@@ -40,7 +41,7 @@ export default function HomeView() {
         <HomeCategoryView categoryType='For You' mediaData={mediaData} />
         <HomeCategoryView categoryType='Trending' mediaData={mediaData} />
         <HomeCategoryView categoryType='New Release' mediaData={mediaData} />
-        <HomeCategoryView categoryType='Recently Updated' mediaData={mediaData} />
+        <HomeCategoryView categoryType='Coming Soon' mediaData={mediaData} />
         <HomeCategoryView categoryType='A-Z' mediaData={mediaData} />
       </View>  
     </ScrollView>

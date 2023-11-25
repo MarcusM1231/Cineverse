@@ -1,6 +1,10 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
+
+//Variables
 const ThreadColor = '#008080'
+
+//Displays thread bubble which takes you to corresponding thread
 export default function ThreadView({ episodeNumber }: { episodeNumber: number }) {
     return (
       <View style={styles.container}>

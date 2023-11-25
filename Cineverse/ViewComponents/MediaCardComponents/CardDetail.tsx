@@ -4,10 +4,11 @@ import { MediaData } from "../../Data/MediaData";
 import { ScrollView } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import ThreadView from "./ThreadView";
+import ThreadView from "../ThreadComponents/ThreadView";
 
 const ActiveButtonColor = "#008080"
 
+//Displays a label indicating movie or show
 const MediaTypeLabel = ({ mediaType }: { mediaType: number }) =>{
     var mediaText;
 
@@ -24,6 +25,7 @@ const MediaTypeLabel = ({ mediaType }: { mediaType: number }) =>{
     );
 }
 
+//Displays all the other details such as title image, summary, likes, and thread list
 const CardDetailInfo = () => {
     const route = useRoute();
     const {mediaData} = route.params as {mediaData: MediaData}
@@ -93,7 +95,7 @@ const CardDetailInfo = () => {
             <View style={styles.likesDislikesContainer}>
                 <View style={styles.likesDislikesContainer}>
                     <TouchableOpacity onPress={likeButtonPress} >
-                        <Ionicons style={[styles.likesDislikesIcon, { color: mediaData.likedAlready ? ActiveButtonColor : "white", }]} name="thumbs-up" />
+                        <Ionicons style={[styles.likesDislikesIcon, { color: mediaData.likedAlready ? ActiveButtonColor : "white", }]} name="heart" />
                     </TouchableOpacity>
                     <Text style={styles.likesDislikesText}>{likes}</Text>
                 </View>
@@ -208,17 +210,18 @@ const styles = StyleSheet.create ({
     },
     likesDislikesContainer: {
         flexDirection: "row",
-        marginRight: 20,
+        marginRight: 30,
         marginBottom: 8,
         alignItems: 'center',
         width: 50,
     },
     likesDislikesIcon: {
-        fontSize: 20
+        fontSize: 30
     },
     likesDislikesText: {
         fontSize: 16,
-        color: 'white'
+        color: 'white',
+        
     },
     threadsListTitle: {
         fontSize: 20,

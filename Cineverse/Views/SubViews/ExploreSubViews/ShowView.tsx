@@ -1,15 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import MediaCard from '../MediaCard';
-import ViewMoreCard from '../ViewMoreCard';
+import MediaCard from '../../../ViewComponents/MediaCardComponents/MediaCard';
+import ViewMoreCard from '../../../ViewComponents/MediaCardComponents/ViewMoreCard';
 import { MediaData } from '../../../Data/MediaData';
 import mediaData from '../../../Data/MediaData';
 
+//Props
 type MediaCategoryProps = {
   categoryType: string;
   mediaData: MediaData[];
 } 
 
+//Displays the first six media cards for each section on show view
 const ShowCategoryView = (props: MediaCategoryProps) => {
   const mediaCards = props.mediaData
     .filter((media) => media.type === 0)
@@ -37,7 +39,7 @@ export default function ShowView() {
         <ShowCategoryView categoryType='For You' mediaData={mediaData} />
         <ShowCategoryView categoryType='Trending' mediaData={mediaData} />
         <ShowCategoryView categoryType='New Episodes' mediaData={mediaData} />
-        <ShowCategoryView categoryType='New Series' mediaData={mediaData} />
+        <ShowCategoryView categoryType='Coming Soon' mediaData={mediaData} />
         <ShowCategoryView categoryType='Random Shows' mediaData={mediaData} />
       </View>  
     </ScrollView>

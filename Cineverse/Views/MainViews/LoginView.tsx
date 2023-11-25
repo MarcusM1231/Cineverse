@@ -34,6 +34,7 @@ export default function LoginView() {
                 autoCorrect={false} 
                 onChangeText={(text) => setEmail(text)}  
                 placeholder='Email'
+                textContentType='emailAddress'
             />
 
             <TextInput style={styles.input} 
@@ -43,6 +44,7 @@ export default function LoginView() {
                 secureTextEntry 
                 onChangeText={(text) => setPassword(text)}  
                 placeholder='Password'
+                textContentType='password'
             />
           
             <TouchableOpacity style={styles.button} onPress={() => loginUser(email, password)}>
