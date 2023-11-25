@@ -1,20 +1,23 @@
 import { StyleSheet, Text, View, TouchableOpacity, Alert} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useState, useEffect } from 'react';
-import ProfileCollectionsView from '../../Views/SubViews/ProfileSubView/ProfileCollectionsView';
-import ProfileCommentsView from '../../Views/SubViews/ProfileSubView/ProfileCommentsView';
-import ProfileLikesView from '../../Views/SubViews/ProfileSubView/ProfileLikesView';
+import ProfileCollectionsView from './ProfileCollectionsView';
+import ProfileCommentsView from './ProfileCommentsView';
+import ProfileLikesView from './ProfileLikesView';
 import firebase from 'firebase/compat';
-  
+ 
+//Variables
 const ActiveButtonColor = "#008080"
 
 const commentCategory = "Comments";
 const collectionCategory = "Collections";
 const likeCategory = "Likes";
 
+//Displays users username
 const UsernameDisplay = () => {
     const [username, setUsername] = useState('')
 
+    //Fetches username from firebase
     useEffect(() => {
         const fetchUserData = async () => {
           try {
@@ -37,13 +40,11 @@ const UsernameDisplay = () => {
     return (
         <View style={styles.profileUsernameContainer}>
             <Text style={styles.username}>@{username}</Text> 
-            {/* <TouchableOpacity>
-                <Ionicons name="pencil" style={styles.pencilButton}/>
-            </TouchableOpacity> */}
         </View>
     )
 }
 
+//Users profile image
 const ProfileImage = () =>{
     return (
         <View style={styles.profileImageContainer}>
@@ -77,10 +78,12 @@ const SettingGear = () => {
     )
 }
 
+// Users following/follower count
 const FollersFollowingCount = () => {
     const [followersCount, setFollowersCount] = useState(0);
     const [followingCount, setFollowingCount] = useState(0);
 
+    //Fetches users following/follower count
     useEffect(() => {
         const user = firebase.auth().currentUser;
         if (user) {
@@ -161,8 +164,8 @@ const ProfileCategories = () => {
     )
 }
 
-//Header 
-export default function ProfileHeaderComponent() {   
+//Header view with all components
+export default function ProfileHeaderView() {   
     return (
         <View style={styles.profileContainer}>            
             <View style={styles.container}>    

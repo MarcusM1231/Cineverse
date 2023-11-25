@@ -31,7 +31,6 @@ export default function RegisterView() {
 
         if(response.user){
             Alert.alert('Account Created!')
-            //navigation.navigate('LoginView')
         }
     }
 

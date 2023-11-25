@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginView from './LoginView';
 import RegisterView from './RegisterView';
 
+//Variables
 const Stack = createNativeStackNavigator();
 const BackgroundColor = '#121212'
 

@@ -1,6 +1,7 @@
 import { Text, View, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 
+//Displays View More card 
 export default function ViewMoreCard() {
 
     return (
