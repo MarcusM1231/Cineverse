@@ -3,8 +3,8 @@ import { useRoute } from '@react-navigation/native';
 import { MediaData } from "../../Data/MediaData";
 import { ScrollView } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import ThreadView from "../ThreadComponents/ThreadView";
+import { useState } from 'react';
+import ThreadBubble from "../ThreadComponents/ThreadBubble";
 
 const ActiveButtonColor = "#008080"
 
@@ -75,7 +75,7 @@ const CardDetailInfo = () => {
 
     const threads = Array.from({length: mediaData.episodeNumber}, (_, index) => (
         <View key={index}>
-            <ThreadView episodeNumber={index + 1} />
+            <ThreadBubble episodeNumber={index + 1} />
         </View>
     ))
 
