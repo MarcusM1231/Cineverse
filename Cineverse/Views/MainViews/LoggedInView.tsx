@@ -7,6 +7,7 @@ import ExploreView from './ExploreView';
 import SearchView from './SearchView';
 import ProfileView from './ProfileView';
 import CardDetail from '../../ViewComponents/MediaCardComponents/CardDetail';
+import ThreadView from '../SubViews/ThreadView';
 
 //Variables
 const Tab = createBottomTabNavigator();
@@ -20,18 +21,25 @@ function Explore() {
     return(
       <Stack.Navigator>
         <Stack.Screen name='ExploreView' component={ExploreView} 
-        options={{
-          title: 'Explore',
-          headerTitleStyle: {color: InactiveIconColor},
-          headerStyle: {backgroundColor: BackgroundColor}
-          }}/>
+          options={{
+            title: 'Explore',
+            headerTitleStyle: {color: InactiveIconColor},
+            headerStyle: {backgroundColor: BackgroundColor}
+            }}/>
   
         <Stack.Screen name='CardDetail' component={CardDetail} 
-        options={{
-          title:'',
-          headerTintColor: InactiveIconColor,
-          headerStyle: {backgroundColor: BackgroundColor}
-        }}/>
+          options={{
+            title:'',
+            headerTintColor: InactiveIconColor,
+            headerStyle: {backgroundColor: BackgroundColor}
+          }}/>
+
+        <Stack.Screen name='ThreadView' component={ThreadView} 
+          options={{
+            title:'',
+            headerTintColor: InactiveIconColor,
+            headerStyle: {backgroundColor: BackgroundColor}
+          }}/>
       </Stack.Navigator>
     )
   }
