@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import {Text, TextInput, TouchableOpacity, View, StyleSheet, Alert } from 'react-native'
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-
+import styles from '../../css/LoggedOutStylesheet'
 import firebase from '../../firebase/firebaseConfig'
 
 //This is the view where users register and create their account 
@@ -79,59 +79,3 @@ export default function RegisterView() {
         </View>
       );
     }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center', 
-        backgroundColor: '#121212'
-    },
-    logo: {
-        color: "white",
-        fontSize: 30,
-        marginBottom: 20
-    },
-    input: {
-        height: 48,
-        width: "80%",
-        borderRadius: 5,
-        overflow: 'hidden',
-        backgroundColor: 'white',
-        marginTop: 10,
-        marginBottom: 10,
-        marginLeft: 30,
-        marginRight: 30,
-        paddingLeft: 16
-    },
-    button: {
-        backgroundColor: '#008080',
-        width: "80%",
-        marginLeft: 30,
-        marginRight: 30,
-        marginTop: 20,
-        height: 48,
-        borderRadius: 5,
-        alignItems: "center",
-        justifyContent: 'center'
-    },
-    buttonTitle: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: "bold"
-    },
-    footerView: {
-        alignItems: "center",
-        marginTop: 20
-    },
-    footerText: {
-        fontSize: 16,
-        color: 'white'
-    },
-    footerLink: {
-        color: "#008080",
-        fontWeight: "bold",
-        fontSize: 16
-    }
-   
-})

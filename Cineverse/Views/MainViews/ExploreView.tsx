@@ -3,6 +3,7 @@ import { useState } from 'react';
 import HomeView from '../SubViews/ExploreSubViews/HomeView';
 import MovieView from '../SubViews/ExploreSubViews/MovieView'
 import ShowView from '../SubViews/ExploreSubViews/ShowView'
+import styles from '../../css/ExploreStylesheet'
 
 //Props
 type ButtonProp = {
@@ -86,33 +87,3 @@ export default function ExploreView() {
     </View>
     );
   }
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#121212',
-      alignItems: 'flex-start', 
-    },
-
-    buttonTextStyle: {
-      textAlign: 'center',
-      color: 'white'
-    },
-    buttonCategory: {
-      marginHorizontal: 15,
-      marginVertical: 20,
-      width: 90,
-      textAlign: 'center',
-      // backgroundColor: '#333333',
-      color: 'white',
-      padding: 5,
-      borderRadius: 15,
-      overflow: 'hidden',
-    },
-    buttonsContainer: {
-      //backgroundColor: '#121212',  //this will end up being removed since background will handle it
-      flexDirection: 'row',
-      width: '100%',
-      justifyContent: 'center',
-    }
-  });
