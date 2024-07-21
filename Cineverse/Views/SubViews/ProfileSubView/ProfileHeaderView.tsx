@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react';
 import ProfileCollectionsView from './ProfileCollectionsView';
 import ProfileCommentsView from './ProfileCommentsView';
 import ProfileLikesView from './ProfileLikesView';
+import ProfileImage from './ProfileImage';
 import firebase from 'firebase/compat';
+import AsyncStorage from '@react-native-async-storage/async-storage';
  
 //Variables
 const ActiveButtonColor = "#008080"
@@ -15,45 +17,48 @@ const likeCategory = "Likes";
 
 //Displays users username
 const UsernameDisplay = () => {
-    const [username, setUsername] = useState('')
+    const [username, setUsername] = useState('');
 
-    //Fetches username from firebase
     useEffect(() => {
         const fetchUserData = async () => {
-          try {
-            const user = firebase.auth().currentUser;
-            if (user) {
-              const userDataSnapshot = await firebase.database().ref(`/users/${user.uid}`).once('value');
-              const userData = userDataSnapshot.val();
-              if (userData && userData.initialData.username) {
-                setUsername(userData.initialData.username);
-              }
+            try {
+                const user = firebase.auth().currentUser;
+                if (user) {
+                    const userId = user.uid;
+                    const storageKey = `username-${userId}`;
+                    // Check if username is cached
+                    const cachedUsername = await AsyncStorage.getItem(storageKey);
+                    if (cachedUsername) {
+                        setUsername(cachedUsername);
+                        console.log("Grabbed username from cache!")
+                    } else {
+                        console.log("Trying to grab username from firebase...")
+                        // Fetch username from Firebase
+                        const userDataSnapshot = await firebase.database().ref(`/users/${userId}`).once('value');
+                        const userData = userDataSnapshot.val();
+                        if (userData && userData.initialData && userData.initialData.username) {
+                            console.log("Grabbed username from firebase!")
+                            const fetchedUsername = userData.initialData.username;
+                            setUsername(fetchedUsername);
+                            // Cache the fetched username in AsyncStorage
+                            await AsyncStorage.setItem(storageKey, fetchedUsername);
+                        }
+                    }
+                }
+            } catch (error: any) {
+                console.error('Error fetching user data:', error.message);
             }
-          } catch (error: any) {
-            console.error('Error fetching user data:', error.message);
-          }
         };
-    
+
         fetchUserData();
-      }, []);
-    
+    }, []);
+
     return (
         <View style={styles.profileUsernameContainer}>
-            <Text style={styles.username}>@{username}</Text> 
+            <Text style={styles.username}>@{username}</Text>
         </View>
-    )
-}
-
-//Users profile image
-const ProfileImage = () =>{
-    return (
-        <View style={styles.profileImageContainer}>
-            <TouchableOpacity>
-                <Ionicons name='person' style={styles.profileImage} color={'white'} />
-            </TouchableOpacity>
-        </View>
-    )
-}
+    );
+};
 
 /*
 Right now clicking gear will log user out. Will update this once Settings
