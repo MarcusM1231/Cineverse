@@ -26,7 +26,7 @@ export default function ProfileImage() {
                     const cachedImageUri = await AsyncStorage.getItem(storageKey);
 
                     if (cachedImageUri) {
-                        console.log("Loading from cache: ", cachedImageUri);
+                        console.log("Loading image from cache: ", cachedImageUri);
                         
                         //Find a beter way for this since it throws error if it cant find the link
                         if ((await axios.head(cachedImageUri)).status === 200) {
