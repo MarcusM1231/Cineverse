@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import LoginView from './LoginView';
 import RegisterView from './RegisterView';
+import ForgotPasswordView from '../SubViews/LoggedOutSubViews/ForgotPasswordView';
 
 //Variables
 const Stack = createNativeStackNavigator();
@@ -19,6 +20,9 @@ export default function LoggedOutView() {
           }
           } />
           <Stack.Screen name='RegisterView' component={RegisterView} 
+          options={ {headerShown: false}} 
+          />
+          <Stack.Screen name='ForgotPasswordView' component={ForgotPasswordView} 
           options={ {headerShown: false}} 
           />
           </Stack.Navigator>

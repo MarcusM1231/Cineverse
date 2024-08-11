@@ -16,6 +16,10 @@ export default function LoginView() {
     navigation.navigate('RegisterView');
   };
 
+  const onForgotPasswordLinkPress = () =>{
+    navigation.navigate('ForgotPasswordView');
+  }
+
   const loginUser = async (email: string, password: string) => {
     setLoading(true);
     try {
@@ -57,6 +61,10 @@ export default function LoginView() {
             placeholder='Password'
             textContentType='password'
           />
+
+          <View style={styles.forgotPasswordContainer}>
+            <Text style={styles.forgotPasswordLink} onPress={onForgotPasswordLinkPress}>Forgot Password?</Text>
+          </View>
 
           <TouchableOpacity style={styles.button} onPress={() => loginUser(email, password)}>
             <Text style={styles.buttonTitle}>Log in</Text>
