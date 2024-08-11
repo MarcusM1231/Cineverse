@@ -63,4 +63,28 @@ export default  StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    errorText: {
+        color: 'red',
+        fontSize: 14,
+        marginTop: -8,
+        marginBottom: 10,
+    },
+    forgotPasswordContainer: {
+        width: '80%',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginLeft: 30,
+        marginRight: 30,
+        marginTop: 5,
+    },
+    forgotPasswordLink: {
+        color: AccentColor,
+        fontWeight: 'bold'
+    },
+    backButtonText: {
+        marginTop: 20,
+        color: AccentColor,
+        fontSize: 16,
+        fontWeight: 'bold',
+      },
 })
