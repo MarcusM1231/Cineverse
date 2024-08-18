@@ -7,9 +7,13 @@ import ProfileLikesView from './ProfileLikesView';
 import ProfileImage from './ProfileImage';
 import firebase from 'firebase/compat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
- 
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
+import { useUser } from "../../../Data/UserContext"
+
 //Variables
 const ActiveButtonColor = "#008080"
+const InactiveButtonColor = "#333333"
 
 const commentCategory = "Comments";
 const collectionCategory = "Collections";
@@ -17,45 +21,10 @@ const likeCategory = "Likes";
 
 //Displays users username
 const UsernameDisplay = () => {
-    const [username, setUsername] = useState('');
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const user = firebase.auth().currentUser;
-                if (user) {
-                    const userId = user.uid;
-                    const storageKey = `username-${userId}`;
-                    // Check if username is cached
-                    const cachedUsername = await AsyncStorage.getItem(storageKey);
-                    if (cachedUsername) {
-                        setUsername(cachedUsername);
-                        console.log("Grabbed username from cache!")
-                    } else {
-                        console.log("Trying to grab username from firebase...")
-                        // Fetch username from Firebase
-                        const userDataSnapshot = await firebase.database().ref(`/users/${userId}`).once('value');
-                        const userData = userDataSnapshot.val();
-                        if (userData && userData.initialData && userData.initialData.username) {
-                            console.log("Grabbed username from firebase!")
-                            const fetchedUsername = userData.initialData.username;
-                            setUsername(fetchedUsername);
-                            // Cache the fetched username in AsyncStorage
-                            await AsyncStorage.setItem(storageKey, fetchedUsername);
-                        }
-                    }
-                }
-            } catch (error: any) {
-                console.error('Error fetching user data:', error.message);
-            }
-        };
-
-        fetchUserData();
-    }, []);
-
+    const user = useUser();
     return (
         <View style={styles.profileUsernameContainer}>
-            <Text style={styles.username}>@{username}</Text>
+            <Text style={styles.username}>@{user?.username}</Text>
         </View>
     );
 };
@@ -65,18 +34,14 @@ Right now clicking gear will log user out. Will update this once Settings
 View gets implemented
 */
 const SettingGear = () => {
-    const handleLogout = async () => {
-        try {
-          await firebase.auth().signOut();
-
-        } catch (error: any) {
-          Alert.alert("Error: ", error.message)
-        }
-      };
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const goToSettings = () =>{
+        navigation.navigate('SettingsView');
+    }
     
     return(
         <View style={styles.gearDisplay}>
-            <TouchableOpacity onPress={handleLogout}>
+            <TouchableOpacity onPress={goToSettings}>
                 <Ionicons name='settings' style={styles.gearIcon} />
             </TouchableOpacity>
         </View>
@@ -89,28 +54,28 @@ const FollersFollowingCount = () => {
     const [followingCount, setFollowingCount] = useState(0);
 
     //Fetches users following/follower count
-    useEffect(() => {
-        const user = firebase.auth().currentUser;
-        if (user) {
-            const userRef = firebase.database().ref(`/users/${user.uid}`);
+    // useEffect(() => {
+    //     const user = firebase.auth().currentUser;
+    //     if (user) {
+    //         const userRef = firebase.database().ref(`/users/${user.uid}`);
 
-            // Attach an event listener for any value changes in the user node
-            const onDataChange = (snapshot: any) => {
-                const userData = snapshot.val();
-                if (userData) {
-                    setFollowersCount(userData.initialData.followers);
-                    setFollowingCount(userData.initialData.following);
-                }
-            };
+    //         // Attach an event listener for any value changes in the user node
+    //         const onDataChange = (snapshot: any) => {
+    //             const userData = snapshot.val();
+    //             if (userData) {
+    //                 setFollowersCount(userData.initialData.followers);
+    //                 setFollowingCount(userData.initialData.following);
+    //             }
+    //         };
 
-            userRef.on('value', onDataChange);
+    //         userRef.on('value', onDataChange);
 
-            // Return a cleanup function to detach the event listener when component unmounts
-            return () => {
-                userRef.off('value', onDataChange);
-            };
-        }
-    }, []);
+    //         // Return a cleanup function to detach the event listener when component unmounts
+    //         return () => {
+    //             userRef.off('value', onDataChange);
+    //         };
+    //     }
+    // }, []);
 
     return (
         <View style={styles.followingFollowersContainer}>
@@ -143,17 +108,17 @@ const ProfileCategories = () => {
         <View>
             <View style={styles.categoriesContainer}>
                 <TouchableOpacity onPress={() => handleCategoryChange(commentCategory)}>
-                    <Text style={[styles.categoriesText, {backgroundColor: currentCategory === commentCategory ? ActiveButtonColor : "#333333"}]}>
+                    <Text style={[styles.categoriesText, {backgroundColor: currentCategory === commentCategory ? ActiveButtonColor : InactiveButtonColor}]}>
                         {commentCategory}
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleCategoryChange(collectionCategory)}>
-                    <Text style={[styles.categoriesText, {backgroundColor: currentCategory === collectionCategory ? ActiveButtonColor : "#333333"}]}>
+                    <Text style={[styles.categoriesText, {backgroundColor: currentCategory === collectionCategory ? ActiveButtonColor : InactiveButtonColor}]}>
                         {collectionCategory}
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleCategoryChange(likeCategory)}>
-                    <Text style={[styles.categoriesText, {backgroundColor: currentCategory === likeCategory ? ActiveButtonColor : "#333333"}]}>
+                    <Text style={[styles.categoriesText, {backgroundColor: currentCategory === likeCategory ? ActiveButtonColor : InactiveButtonColor}]}>
                         {likeCategory}
                     </Text>
                 </TouchableOpacity>
@@ -232,8 +197,9 @@ export default function ProfileHeaderView() {
     //Settings Gear Styles
     gearIcon: {
         fontSize: 27,
-        padding: 5,
-        color: 'white'
+        color: 'lightgray',
+        marginRight: 10,
+        marginTop: 10
     },
     gearDisplay : {
         alignItems: 'flex-end',

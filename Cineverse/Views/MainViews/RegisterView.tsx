@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Text, TextInput, TouchableOpacity, View, ActivityIndicator, Alert } from 'react-native';
+import { Text, TextInput, TouchableOpacity, View, ActivityIndicator, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import styles from '../../css/LoggedOutStylesheet';
 import firebase from '../../firebase/firebaseConfig';
 
-// This is the view where users register and create their account 
 export default function RegisterView() {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
@@ -149,73 +148,75 @@ export default function RegisterView() {
     };
 
     return (
-        <View style={styles.container}>
-            {loading ? (
-                <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#008080" />
-                </View>
-            ) : (
-                <>
-                    <Text style={styles.logo}>Create Account</Text>
-
-                    <TextInput
-                        style={[styles.input, emailError && touchedFields.email ? { borderColor: 'red' } : {}]}
-                        value={email}
-                        onChangeText={(text) => handleInputChange('email', text)}
-                        onBlur={() => handleBlur('email')}
-                        autoComplete='off'
-                        placeholder='Email'
-                        textContentType='emailAddress'
-                    />
-                    {emailError && touchedFields.email ? <Text style={styles.errorText}>{emailError}</Text> : null}
-
-                    <TextInput
-                        style={[styles.input, usernameError && touchedFields.username ? { borderColor: 'red' } : {}]}
-                        value={username}
-                        onChangeText={(text) => handleInputChange('username', text)}
-                        onBlur={() => handleBlur('username')}
-                        autoComplete='off'
-                        placeholder='Username'
-                        textContentType='username'
-                    />
-                    {usernameError && touchedFields.username ? <Text style={styles.errorText}>{usernameError}</Text> : null}
-
-                    <TextInput
-                        style={[styles.input, passwordError && touchedFields.password ? { borderColor: 'red' } : {}]}
-                        value={password}
-                        secureTextEntry
-                        onChangeText={(text) => handleInputChange('password', text)}
-                        onBlur={() => handleBlur('password')}
-                        autoComplete='off'
-                        placeholder='Password'
-                        textContentType='newPassword'
-                    />
-                    {passwordError && touchedFields.password ? <Text style={styles.errorText}>{passwordError}</Text> : null}
-
-                    <TextInput
-                        style={[styles.input, confirmPasswordError && touchedFields.confirmPassword ? { borderColor: 'red' } : {}]}
-                        value={confirmPassword}
-                        secureTextEntry
-                        onChangeText={(text) => handleInputChange('confirmPassword', text)}
-                        onBlur={() => handleBlur('confirmPassword')}
-                        autoComplete='off'
-                        placeholder='Confirm Password'
-                    />
-                    {confirmPasswordError && touchedFields.confirmPassword ? <Text style={styles.errorText}>{confirmPasswordError}</Text> : null}
-
-                    <TouchableOpacity
-                        style={[styles.button, !isFormValid ? { backgroundColor: '#333333' } : {}]}
-                        onPress={registerAndGoToMainFlow}
-                        disabled={!isFormValid}
-                    >
-                        <Text style={styles.buttonTitle}>Create Account</Text>
-                    </TouchableOpacity>
-
-                    <View style={styles.footerView}>
-                        <Text style={styles.footerText}>Already got an account? <Text style={styles.footerLink} onPress={onFooterLinkPress}>Log in</Text></Text>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
+                {loading ? (
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="large" color="#008080" />
                     </View>
-                </>
-            )}
-        </View>
+                ) : (
+                    <>
+                        <Text style={styles.logo}>Create Account</Text>
+
+                        <TextInput
+                            style={[styles.input, emailError && touchedFields.email ? { borderColor: 'red' } : {}]}
+                            value={email}
+                            onChangeText={(text) => handleInputChange('email', text)}
+                            onBlur={() => handleBlur('email')}
+                            autoComplete='off'
+                            placeholder='Email'
+                            textContentType='emailAddress'
+                        />
+                        {emailError && touchedFields.email ? <Text style={styles.errorText}>{emailError}</Text> : null}
+
+                        <TextInput
+                            style={[styles.input, usernameError && touchedFields.username ? { borderColor: 'red' } : {}]}
+                            value={username}
+                            onChangeText={(text) => handleInputChange('username', text)}
+                            onBlur={() => handleBlur('username')}
+                            autoComplete='off'
+                            placeholder='Username'
+                            textContentType='username'
+                        />
+                        {usernameError && touchedFields.username ? <Text style={styles.errorText}>{usernameError}</Text> : null}
+
+                        <TextInput
+                            style={[styles.input, passwordError && touchedFields.password ? { borderColor: 'red' } : {}]}
+                            value={password}
+                            secureTextEntry
+                            onChangeText={(text) => handleInputChange('password', text)}
+                            onBlur={() => handleBlur('password')}
+                            autoComplete='off'
+                            placeholder='Password'
+                            textContentType='newPassword'
+                        />
+                        {passwordError && touchedFields.password ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+
+                        <TextInput
+                            style={[styles.input, confirmPasswordError && touchedFields.confirmPassword ? { borderColor: 'red' } : {}]}
+                            value={confirmPassword}
+                            secureTextEntry
+                            onChangeText={(text) => handleInputChange('confirmPassword', text)}
+                            onBlur={() => handleBlur('confirmPassword')}
+                            autoComplete='off'
+                            placeholder='Confirm Password'
+                        />
+                        {confirmPasswordError && touchedFields.confirmPassword ? <Text style={styles.errorText}>{confirmPasswordError}</Text> : null}
+
+                        <TouchableOpacity
+                            style={[styles.button, !isFormValid ? { backgroundColor: '#333333' } : {}]}
+                            onPress={registerAndGoToMainFlow}
+                            disabled={!isFormValid}
+                        >
+                            <Text style={styles.buttonTitle}>Create Account</Text>
+                        </TouchableOpacity>
+
+                        <View style={styles.footerView}>
+                            <Text style={styles.footerText}>Already got an account? <Text style={styles.footerLink} onPress={onFooterLinkPress}>Log in</Text></Text>
+                        </View>
+                    </>
+                )}
+            </View>
+        </TouchableWithoutFeedback>
     );
 }
