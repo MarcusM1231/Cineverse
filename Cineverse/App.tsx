@@ -1,4 +1,4 @@
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { useState, useEffect } from 'react';
 import firebase from './firebase/firebaseConfig';
@@ -35,6 +35,7 @@ export default function App() {
   return (
     <UserProvider>
       <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
       <NavigationContainer>
         {loggedIn ? <LoggedInView /> : <LoggedOutView />}
       </NavigationContainer>

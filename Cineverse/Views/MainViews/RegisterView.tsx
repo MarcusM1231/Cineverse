@@ -212,7 +212,7 @@ export default function RegisterView() {
                         </TouchableOpacity>
 
                         <View style={styles.footerView}>
-                            <Text style={styles.footerText}>Already got an account? <Text style={styles.footerLink} onPress={onFooterLinkPress}>Log in</Text></Text>
+                            <Text style={styles.footerText}>Already have an account? <Text style={styles.footerLink} onPress={onFooterLinkPress}>Log in</Text></Text>
                         </View>
                     </>
                 )}
