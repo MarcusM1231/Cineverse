@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firebase from 'firebase/compat';
-import axios from 'axios';
 
 import { useUser } from "../../../Data/UserContext";
 
@@ -13,13 +12,13 @@ export default function ProfileImage() {
     const user = useUser();
     const [profileImage, setProfileImage] = useState(user?.imageUrl || '');
 
-    const USERID = user ? user.uid : "";
+    const USERID = user?.uid;
     const storageKey = `@profileImage-${USERID}`;
 
     useEffect(() => {
         if (user?.imageUrl) {
             setProfileImage(user.imageUrl);
-            console.log("user")
+            console.log("Image URL: ", user?.imageUrl)
         } else {
             // Handle image loading if needed
             loadImageFromFirebase();
@@ -75,6 +74,7 @@ export default function ProfileImage() {
                         profileImage: firebase.firestore.FieldValue.delete(),
                     });
 
+                    // Remove from cache
                     await AsyncStorage.removeItem(storageKey);
                 } else {
                     console.log('No image to delete');
@@ -120,7 +120,20 @@ export default function ProfileImage() {
         }
     };
 
+    const requestPermission = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Permission Denied', 'We need access to your photo library to allow you to choose a profile picture.');
+            return false;
+        }
+        return true;
+    };
+
+
     const pickImage = async () => {
+        const hasPermission = await requestPermission();
+        if (!hasPermission) return;
+
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,

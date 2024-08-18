@@ -5,7 +5,7 @@ import firebase from 'firebase/compat';
 interface User {
     uid: string;
     username: string;
-    email: string; // Added email field
+    email: string; 
     imageUrl?: string;
 }
 
@@ -28,15 +28,14 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
                 const userId = currentUser.uid;
                 const usernameKey = `username-${userId}`;
                 const imageKey = `profileImage-${userId}`;
-                const emailKey = `email-${userId}`; // Added email key
-    
+                const emailKey = `email-${userId}`;
                 // Fetch cached data
                 const cachedUsername = await AsyncStorage.getItem(usernameKey);
-                const cachedEmail = await AsyncStorage.getItem(emailKey); // Fetch cached email
+                const cachedEmail = await AsyncStorage.getItem(emailKey);
                 let cachedImageUri = await AsyncStorage.getItem(imageKey);
     
                 let username: string = cachedUsername || '';
-                let email: string = cachedEmail || currentUser.email || ''; // Set email
+                let email: string = cachedEmail || currentUser.email || '';
                 let imageUrl: string | null = cachedImageUri;
     
                 // Fetch username if not cached
