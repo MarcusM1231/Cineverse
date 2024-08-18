@@ -6,6 +6,8 @@ import firebase from './firebase/firebaseConfig';
 import LoggedInView from './Views/MainViews/LoggedInView';
 import LoggedOutView from './Views/MainViews/LoggedOutView';
 
+import { UserProvider } from './Data/UserContext';
+
 const BackgroundColor = '#121212';
 
 export default function App() {
@@ -31,11 +33,14 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
+    <UserProvider>
+      <View style={styles.container}>
       <NavigationContainer>
         {loggedIn ? <LoggedInView /> : <LoggedOutView />}
       </NavigationContainer>
     </View>
+    </UserProvider>
+    
   );
 }
 
