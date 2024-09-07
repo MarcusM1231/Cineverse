@@ -7,6 +7,8 @@ import LoggedInView from './Views/MainViews/LoggedInView';
 import LoggedOutView from './Views/MainViews/LoggedOutView';
 
 import { UserProvider } from './Data/UserContext';
+import { MediaProvider } from './Data/MediaContext';
+import { PaperProvider } from 'react-native-paper';
 
 const BackgroundColor = '#121212';
 
@@ -34,12 +36,16 @@ export default function App() {
 
   return (
     <UserProvider>
-      <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
-      <NavigationContainer>
-        {loggedIn ? <LoggedInView /> : <LoggedOutView />}
-      </NavigationContainer>
-    </View>
+      <MediaProvider>
+        <PaperProvider>
+        <View style={styles.container}>
+          <StatusBar barStyle="light-content" />
+          <NavigationContainer>
+            {loggedIn ? <LoggedInView /> : <LoggedOutView />}
+          </NavigationContainer>
+        </View>
+        </PaperProvider>
+      </MediaProvider>
     </UserProvider>
     
   );

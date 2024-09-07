@@ -1,55 +1,69 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useState, useEffect } from 'react';
 import { Comment } from '../../Data/Comment';
 import firebase from 'firebase/compat';
+import { useUser } from "../../Data/UserContext";
+import { Menu, Divider} from 'react-native-paper';
 
 interface ThreadCardProps {
 comment: Comment;
+blur: boolean;
 }
 
-//Variables
+interface ProfileInfoProps {
+    profileUsername: string;
+    userId: string;
+}
+
 const ThreadColor = '#008080'
 //These will be removed later. just placeholder values
 var upvoteAlready = false
 var downvoteAlready = false
-const numberOfReplies = 20
+const numberOfReplies = 20;
 
-//Displays the prfoile picture and username of the user who commented 
-const ProfileInfo = ({ profileUsername }: { profileUsername: string }) => {
-    const [userCommented, setUserCommented] = useState('')
+const ProfileInfo: React.FC<ProfileInfoProps> = ({ profileUsername, userId }) => {
+    const [profileImage, setProfileImage] = useState<string | null>(null);
 
-    //Fetches username from firebase
     useEffect(() => {
-        const fetchUserData = async () => {
-        try {
-            const userDataSnapshot = await firebase.database().ref(`/users/${profileUsername}`).once('value');
-            const userData = userDataSnapshot.val();
-            if (userData) {
-                setUserCommented(userData.initialData.username);
+        const fetchProfileImage = async () => {
+            try {
+                const userDoc = await firebase.firestore().collection('users').doc(userId).get();
+                const userData = userDoc.data();
+                if (userData && userData.profileImage) {
+                    setProfileImage(userData.profileImage);
+                } else {
+                    setProfileImage(null);
+                }
+            } catch (error) {
+                console.error("Error fetching profile image: ", error);
+                setProfileImage(null);
             }
-        } catch (error: any) {
-            console.error('Error fetching user data:', error.message);
-        }
         };
 
-        fetchUserData();
-    }, []);
-    
-    return(
+        fetchProfileImage();
+    }, [userId]);
+
+    return (
         <View style={styles.profileContainer}>
-            <Ionicons name='person' style={styles.profileImage} color={'white'} />
-            <Text style={styles.profileUsername}>{userCommented}</Text>
+            {profileImage ? (
+                <Image source={{ uri: profileImage }} style={styles.profileImageFound} />
+            ) : (
+                <Ionicons name='person' size={20} style={styles.profileImage} color={'white'} />
+            )}
+            <Text style={styles.profileUsername}>{profileUsername}</Text>
         </View>
-    )
-}
+    );
+};
 
 //Displays the text of the comment
-const CommentText = ({ commentText }: { commentText: string }) => {
+const CommentText = ({ comment, blur }: { comment: Comment, blur: boolean }) => {
+    const user = useUser();
+    const showBlur = blur && user?.uid !== comment.userId
     return(
         <View style={styles.commentContainer}>
-            <Text numberOfLines={3} ellipsizeMode="tail" style={styles.commentText}>
-                {commentText}
+            <Text numberOfLines={3} ellipsizeMode="tail" style={[styles.commentText, showBlur  && styles.commentTextBlur]}>
+                {comment.commentText}
             </Text>
         </View>
     )
@@ -68,43 +82,12 @@ const ViewReplies = () => {
 
 //Displays Upvote and downvote of the comments
 const CommentVotes = ({ likes, dislikes }: { likes: number, dislikes: number }) =>{
-    const [upvotes, setUpvotes] = useState(likes);
-    const [downvotes, setDownvotes] = useState(dislikes);
-
-    //Handles the upvote button
     const upvoteButtonPress = () =>{
-        if(downvoteAlready){
-            setDownvotes(downvotes - 1);
-            // dislikes = dislikes - 1;
-            downvoteAlready = false;
-        }
-        if(!upvoteAlready){
-            setUpvotes(upvotes + 1);
-            // likes = likes + 1;
-            upvoteAlready = true;
-        } else {
-            setUpvotes(upvotes - 1);
-            // likes = likes - 1;
-            upvoteAlready = false;
-        }
+        console.log("Upvote Pressed")
     };
 
-    //Handles the downvote button
     const downvoteButtonPress = () =>{
-        if(upvoteAlready){
-            setUpvotes(upvotes - 1);
-            // likes = likes - 1;
-            upvoteAlready = false;
-        }
-        if(!downvoteAlready){
-            setDownvotes(downvotes + 1);
-            // dislikes = dislikes + 1;
-            downvoteAlready = true;
-        } else {
-            setDownvotes(downvotes - 1);
-            // dislikes = dislikes - 1;
-            downvoteAlready = false;
-        }
+        console.log("Downvote Pressed")
     };
 
     return(
@@ -113,47 +96,123 @@ const CommentVotes = ({ likes, dislikes }: { likes: number, dislikes: number }) 
                 <TouchableOpacity onPress={upvoteButtonPress}>
                     <Ionicons name='chevron-up-circle' style={[styles.votesIcon, { color: upvoteAlready ? ThreadColor : "white", }]}/>
                 </TouchableOpacity>
-                <Text style={styles.votesNumber}>{upvotes}</Text>
+                <Text style={styles.votesNumber}>{likes}</Text>
             </View>
 
             <View style={styles.votesContent}>
                 <TouchableOpacity onPress={downvoteButtonPress}>
                     <Ionicons name='chevron-down-circle' style={[styles.votesIcon, { color: downvoteAlready ? 'red' : "white", }]} />
                 </TouchableOpacity>
-                <Text style={styles.votesNumber}>{downvotes}</Text>
+                <Text style={styles.votesNumber}>{dislikes}</Text>
             </View>
         </View>
     )
 }
 
 //Displays ellipsis button which will display more options such as block, hide, etc
-const EllipsisButton = () => {
+const EllipsisButton = ({ comment }: { comment: Comment }) =>{
+
+    const [menuVisible, setMenuVisible] = useState(false);
+    const [spoilerVisible, setSpoilerVisible] = useState(false);
+    const [spoilerText, setSpoilerText] = useState('Show Spoiler');
+    const user = useUser();
+
+    const closeMenu = () => { setMenuVisible(false); };
+    const openMenu = () => { setMenuVisible(true); };
+    
+    const showAndHideSpoilerPressed = () => {
+        closeMenu();
+
+        if (!spoilerVisible) {
+            setSpoilerText('Hide Spoiler');
+            setSpoilerVisible(true);
+        } else {
+            setSpoilerText('Show Spoiler');
+            setSpoilerVisible(false);
+        }
+    };
+
+    const reportButtonPressed = () => {
+        closeMenu();
+        console.log("Reported Comment");
+    }
+
+    const flagButtonPressed = () => {
+        closeMenu();
+        console.log("Flagged Comment");
+    }
+
+    const deleteButtonPressed = () => {
+        closeMenu();
+        console.log("Deleted Comment");
+    }
+
+    const markSpoilerForMe = () => {
+        closeMenu();
+        console.log("Hide Comment for Me");
+    }
+
     return(
-        <TouchableOpacity>
-            <Ionicons name='ellipsis-horizontal' style={styles.ellipsisIcon} />
-        </TouchableOpacity>
+        <View>
+            {menuVisible && (
+                <TouchableWithoutFeedback onPress={closeMenu}>
+                    <View style={styles.overlay} />
+                </TouchableWithoutFeedback>
+            )}
+            <Menu
+                visible={menuVisible}
+                onDismiss={closeMenu}
+                anchor={
+                    <TouchableOpacity onPress={openMenu}>
+                        <Ionicons name='ellipsis-horizontal' style={styles.ellipsisIcon} />
+                    </TouchableOpacity>
+                 }
+            >
+                {comment.markedSpoiler && user?.uid !== comment.userId && (
+                    <>
+                        <Menu.Item style={styles.menuOption} onPress={showAndHideSpoilerPressed} title={spoilerText}/>
+                        <Divider />
+                    </>
+                )}
+                {user?.uid !== comment.userId && (
+                    <>
+                        {!comment.markedSpoiler && (
+                            <>
+                                <Menu.Item onPress={markSpoilerForMe} title="Mark Spoiler For Me" />
+                                <Divider />
+                            </>
+                        )}
+                        <Menu.Item onPress={flagButtonPressed} title="Flag" />
+                        <Divider />
+                        <Menu.Item onPress={reportButtonPressed} title="Report" />
+                    </>
+                )}
+                {user?.uid === comment.userId && (
+                    <>
+                        <Menu.Item onPress={deleteButtonPressed} title="Delete" />
+                    </>
+                )}
+            </Menu>
+        </View>  
     )
 }
 
 //Displays thread card with the profile picture, comments, and thread upvotes
-export default function ThreadCard({comment}: ThreadCardProps) {
+export default function ThreadCard({comment, blur}: ThreadCardProps) {    
     return (
-        <View style={styles.container}>
-            
+        <View style={styles.container}> 
             <View style={styles.content}>
-                <ProfileInfo profileUsername={comment.userId} />
-                <EllipsisButton />
+                <ProfileInfo profileUsername={comment.username} userId={comment.userId} />
+                <EllipsisButton comment={comment} />
             </View>
             <View>
-                <CommentText commentText= {comment.commentText} />
+                <CommentText comment={comment} blur={blur} />
             </View>
             <View style={styles.commentFooter}>
                 <CommentVotes likes={comment.likes} dislikes={comment.dislikes} />
                 <ViewReplies />
-            </View>
-            
+            </View>    
         </View>
-      
     );
   }
 
@@ -173,7 +232,16 @@ export default function ThreadCard({comment}: ThreadCardProps) {
     profileImage: {
         borderRadius: 10,
         backgroundColor: ThreadColor,
-        width: 35,
+        width: 45,
+        height: 40,
+        padding: 10,
+        textAlign: 'center',
+        overflow: 'hidden',
+    },
+    profileImageFound: {
+        borderRadius: 10,
+        width: 45,
+        height: 40,
         padding: 10,
         textAlign: 'center',
         overflow: 'hidden'
@@ -231,5 +299,32 @@ export default function ThreadCard({comment}: ThreadCardProps) {
         justifyContent: 'center',
         alignItems: 'center',
         marginHorizontal: 10
-    }
+    },
+    commentTextBlur: {
+        color: 'black',
+        left: -2000,
+        elevation: 2,
+        backgroundColor: 'transparent',
+        shadowOpacity: 1,
+        shadowRadius: 4,
+        shadowColor: 'rgba(255,255,255,1)',
+        shadowOffset: { width: 2000, height: 0 },
+    },
+    menuOption: {
+        padding: 10,
+        borderRadius: 20
+      },
+      menu: {
+        backgroundColor: 'white',
+        borderRadius: 20,
+        marginTop: 15
+      },
+      overlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'transparent',
+    },
   });
