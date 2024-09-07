@@ -1,21 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import MediaCard from '../../../ViewComponents/MediaCardComponents/MediaCard';
 import ViewMoreCard from '../../../ViewComponents/MediaCardComponents/ViewMoreCard';
-import { MediaData } from '../../../Data/MediaData';
-import mediaData from '../../../Data/MediaData';
+import { useMedia } from '../../../Data/MediaContext';
+import { Media } from '../../../Data/MediaContext';
 
 //Props
 type MediaCategoryProps = {
   categoryType: string;
-  mediaData: MediaData[];
+  mediaData: Media[];
 } 
 
-//Displays the first six media cards for each section on movie view
 const MovieCategoryView = (props: MediaCategoryProps) => {  
-  const mediaCards = props.mediaData
-    .filter((media) => media.type === 1)
-    .map((media, index) => <MediaCard key={index} media={media} />);
+  const [shuffledMedia, setShuffledMedia] = useState<Media[]>([]);
+
+  //Remove later
+  useEffect(() => {
+    const shuffleArray = (array: Media[]) => {
+      return array.sort(() => Math.random() - 0.5);
+    };
+
+    const shuffled = shuffleArray(props.mediaData.filter(media => media.type === 1));
+    setShuffledMedia(shuffled);
+  }, [props.mediaData]);
+
+  const firstSixMedia = shuffledMedia.slice(0, 6);
+  const mediaCards = firstSixMedia.map((media, index) => (
+    <MediaCard key={index} media={media} />
+  ));
   
   return (
     <View>
@@ -32,6 +44,13 @@ const MovieCategoryView = (props: MediaCategoryProps) => {
 }
 
 export default function MovieView() {
+
+  const mediaData = useMedia();
+
+  if (!mediaData) {
+    return <Text>Loading...</Text>;
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}  showsVerticalScrollIndicator={false}
     showsHorizontalScrollIndicator={false}>
@@ -60,11 +79,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontWeight: 'bold',
     color: 'white'
-  },
-  test: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between'
   },
   horizontalLine: {
     borderBottomColor: '#121212',

@@ -1,13 +1,12 @@
 export interface Comment {
     commentId: string;
-    episodeId: string;
-    datePosted: string;
-    userId: string;
-    flags: number;
-    likes: number;
     commentText: string;
+    likes: number;
     dislikes: number;
-    isSpoiler: boolean;
-    likedAlready: boolean;
-    dislikedAlready: boolean;
+    userId: string;
+    username: string;
+    timestamp: string;
+    flags: number;
+    markedSpoiler: boolean;
+    episodeId: number
   }

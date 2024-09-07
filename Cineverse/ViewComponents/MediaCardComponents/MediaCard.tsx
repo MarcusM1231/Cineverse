@@ -1,30 +1,32 @@
-import { Text, View, TouchableOpacity, StyleSheet, Image} from "react-native";
+import React from 'react';
+import { Text, View, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import {MediaData} from '../../Data/MediaData'
+import { Media } from '../../Data/MediaContext'; // Import the Media type
 
-//Props
+// Props
 type MediaCardProps = {
-    media: MediaData;
+    media: Media;
 }
 
-//Displays media card that appears on explore pages
-export default function MediaCard({media}: MediaCardProps) {
-const navigation = useNavigation<NativeStackNavigationProp<any>>();
+// Displays media card that appears on explore pages
+export default function MediaCard({ media }: MediaCardProps) {
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-const handleMediaCardPress = () =>{
-    navigation.navigate("CardDetail", {mediaData: media})
-};
+    const handleMediaCardPress = () => {
+        navigation.navigate("CardDetail", { mediaData: media });
+    };
+
     return (
         <View>
             <TouchableOpacity style={styles.mediaContainer} onPress={handleMediaCardPress}>
-                <Image style={styles.imageStyle} source={{uri: media.image}} />
+                <Image style={styles.imageStyle} source={{ uri: media.image }} />
             </TouchableOpacity>
         </View>
-    )
+    );
 }
 
-const styles = StyleSheet.create ({
+const styles = StyleSheet.create({
     mediaContainer: {
         width: 100,
         height: 150,
@@ -33,11 +35,11 @@ const styles = StyleSheet.create ({
         margin: 10,
         borderRadius: 10,
         overflow: 'hidden',
-        borderWidth: 2, 
+        borderWidth: 2,
         borderColor: '#333333'
     },
     imageStyle: {
         width: '100%',
         height: '100%'
     }
-})
+});

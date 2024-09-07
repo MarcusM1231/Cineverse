@@ -1,6 +1,6 @@
 import { Text, View, TouchableOpacity, StyleSheet, Image} from "react-native";
 import { useRoute } from '@react-navigation/native';
-import { MediaData } from "../../Data/MediaData";
+import { Media } from '../../Data/MediaContext';
 import { ScrollView } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
@@ -28,54 +28,28 @@ const MediaTypeLabel = ({ mediaType }: { mediaType: number }) =>{
 //Displays all the other details such as title image, summary, likes, and thread list
 const CardDetailInfo = () => {
     const route = useRoute();
-    const {mediaData} = route.params as {mediaData: MediaData}
+    const {mediaData} = route.params as {mediaData: Media}
 
     if(!mediaData){
         return <Text>Data not available</Text>
     }
 
-    const [likes, setLikes] = useState(mediaData.likes);
-    const [dislikes, setDisLikes] = useState(mediaData.dislikes);
+    //const [likes, setLikes] = useState(mediaData.likes);
+    //const [dislikes, setDisLikes] = useState(mediaData.dislikes);
 
     //Handles the like button
     const likeButtonPress = () =>{
-        if(mediaData.dislikedAlready){
-            setDisLikes(dislikes - 1);
-            mediaData.dislikes = dislikes - 1;
-            mediaData.dislikedAlready = false;
-        }
-        if(!mediaData.likedAlready){
-            setLikes(likes + 1);
-            mediaData.likes = likes + 1;
-            mediaData.likedAlready = true;
-        } else {
-            setLikes(likes - 1);
-            mediaData.likes = likes - 1;
-            mediaData.likedAlready = false;
-        }
+        console.log('liked pressed')
     };
 
     //Handles the dislike button
     const dislikeButtonPress = () =>{
-        if(mediaData.likedAlready){
-            setLikes(likes - 1);
-            mediaData.likes = likes - 1;
-            mediaData.likedAlready = false;
-        }
-        if(!mediaData.dislikedAlready){
-            setDisLikes(dislikes + 1);
-            mediaData.dislikes = dislikes + 1;
-            mediaData.dislikedAlready = true;
-        } else {
-            setDisLikes(dislikes - 1);
-            mediaData.dislikes = dislikes - 1;
-            mediaData.dislikedAlready = false;
-        }
+        console.log('disliked pressed')
     };
 
-    const threads = Array.from({length: mediaData.episodeNumber}, (_, index) => (
+    const threads = Array.from({length: mediaData.numberOfEpisodes}, (_, index) => (
         <View key={index}>
-            <ThreadBubble episodeNumber={index + 1} />
+            <ThreadBubble episodeNumber={index + 1} mediaData={mediaData} />
         </View>
     ))
 
@@ -97,7 +71,7 @@ const CardDetailInfo = () => {
                     <TouchableOpacity onPress={likeButtonPress} >
                         <Ionicons style={[styles.likesDislikesIcon, { color: mediaData.likedAlready ? ActiveButtonColor : "white", }]} name="heart" />
                     </TouchableOpacity>
-                    <Text style={styles.likesDislikesText}>{likes}</Text>
+                    <Text style={styles.likesDislikesText}>{mediaData.likes}</Text>
                 </View>
 
                 <View style={styles.likesDislikesContainer}>
@@ -109,7 +83,7 @@ const CardDetailInfo = () => {
             </View>
 
             <View style={styles.summaryContainer}>
-                <Text style={styles.summaryText}>{mediaData.mediaSummary}</Text>
+                <Text style={styles.summaryText}>{mediaData.summary}</Text>
             </View>
 
             <View style={styles.mediaDetails}>

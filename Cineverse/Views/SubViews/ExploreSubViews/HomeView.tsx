@@ -1,20 +1,31 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import MediaCard from '../../../ViewComponents/MediaCardComponents/MediaCard';
 import ViewMoreCard from '../../../ViewComponents/MediaCardComponents/ViewMoreCard';
-import { MediaData } from '../../../Data/MediaData';
-import mediaData from '../../../Data/MediaData';
+import { useMedia } from '../../../Data/MediaContext';
+import { Media } from '../../../Data/MediaContext';
 
-//Props
+// Props
 type MediaCategoryProps = {
   categoryType: string;
-  mediaData: MediaData[];
-} 
+  mediaData: Media[];
+}
 
-//Displays the first six media cards for each section on home view
-const HomeCategoryView = (props: MediaCategoryProps) => {
-  const firstSixMedia = props.mediaData.slice(0, 6);
+// Displays the first six media cards for each section on home view
+const HomeCategoryView = (props: MediaCategoryProps) => {  
+  const [shuffledMedia, setShuffledMedia] = useState<Media[]>([]);
 
+  //Remove later
+  useEffect(() => {
+    const shuffleArray = (array: Media[]) => {
+      return array.sort(() => Math.random() - 0.5);
+    };
+
+    const shuffled = shuffleArray(props.mediaData);
+    setShuffledMedia(shuffled);
+  }, [props.mediaData]);
+
+  const firstSixMedia = shuffledMedia.slice(0, 6);
   const mediaCards = firstSixMedia.map((media, index) => (
     <MediaCard key={index} media={media} />
   ));
@@ -34,9 +45,14 @@ const HomeCategoryView = (props: MediaCategoryProps) => {
 }
 
 export default function HomeView() {
+  const mediaData = useMedia();
+
+  if (!mediaData) {
+    return <Text>Loading...</Text>;
+  }
+
   return (
-    <ScrollView contentContainerStyle={styles.container}  showsVerticalScrollIndicator={false}
-    showsHorizontalScrollIndicator={false}>
+    <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
       <View style={styles.content}>
         <HomeCategoryView categoryType='For You' mediaData={mediaData} />
         <HomeCategoryView categoryType='Trending' mediaData={mediaData} />
@@ -54,7 +70,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   content: {
-    flexDirection:"column",
+    flexDirection: "column",
   },
   categoryTitle: {
     fontSize: 20,
@@ -63,14 +79,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white'
   },
-  test: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  },
   horizontalLine: {
     borderBottomColor: '#121212',
-    borderBottomWidth: 1,   
-    marginVertical: 1,  
+    borderBottomWidth: 1,
+    marginVertical: 1,
   },
 });

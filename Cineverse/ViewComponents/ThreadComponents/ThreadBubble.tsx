@@ -1,41 +1,45 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
+import { Media } from '../../Data/MediaContext';
 
-//Variables
-const ThreadColor = '#008080'
+type ThreadBubbleProps = {
+  episodeNumber: number;
+  mediaData: Media
+}
 
-//Displays thread bubble which takes you to corresponding thread
-export default function ThreadBubble({ episodeNumber }: { episodeNumber: number }) {
+const ThreadColor = '#008080';
+
+// Displays thread bubble which takes you to corresponding thread
+export default function ThreadBubble({ episodeNumber, mediaData }: ThreadBubbleProps) {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
   const onThreadBubbleClick = () => {
-    navigation.navigate('ThreadView')
-  }
+    navigation.navigate('ThreadView', { mediaData, episodeNumber });
+  };
 
-    return (
-      <View style={styles.container}>
-        <TouchableOpacity onPress={onThreadBubbleClick}>
-            <Text style={styles.thread}>{episodeNumber}</Text>
-        </TouchableOpacity> 
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity onPress={onThreadBubbleClick}>
+        <Text style={styles.thread}>{episodeNumber}</Text>
+      </TouchableOpacity>
     </View>
-    );
-  }
+  );
+}
 
-  const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 10 
-    },
-    thread: {
-        textAlign: 'center',
-        width:80,
-        height: 40,
-        borderRadius: 20,
-        overflow: "hidden",
-        backgroundColor: ThreadColor,
-        textAlignVertical: 'center',
-        lineHeight: 40,
-        color: 'white'
-    }
-  });
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10 
+  },
+  thread: {
+    textAlign: 'center',
+    width: 80,
+    height: 40,
+    borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: ThreadColor,
+    textAlignVertical: 'center',
+    lineHeight: 40,
+    color: 'white'
+  }
+});
