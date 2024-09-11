@@ -5,13 +5,16 @@ import { Media } from '../../Data/MediaContext';
 
 type ThreadBubbleProps = {
   episodeNumber: number;
-  mediaData: Media
+  mediaData: Media;
+  threadBubbleColor: string;
+  buttonDisabled: boolean
 }
 
 const ThreadColor = '#008080';
+const FontColor = "#D3D3D3"
 
 // Displays thread bubble which takes you to corresponding thread
-export default function ThreadBubble({ episodeNumber, mediaData }: ThreadBubbleProps) {
+export default function ThreadBubble({ episodeNumber, mediaData, threadBubbleColor, buttonDisabled }: ThreadBubbleProps) {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const onThreadBubbleClick = () => {
     navigation.navigate('ThreadView', { mediaData, episodeNumber });
@@ -19,8 +22,8 @@ export default function ThreadBubble({ episodeNumber, mediaData }: ThreadBubbleP
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={onThreadBubbleClick}>
-        <Text style={styles.thread}>{episodeNumber}</Text>
+      <TouchableOpacity onPress={onThreadBubbleClick} disabled={buttonDisabled}>
+        <Text style={[styles.thread, { backgroundColor: threadBubbleColor }]}>{episodeNumber}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -40,6 +43,6 @@ const styles = StyleSheet.create({
     backgroundColor: ThreadColor,
     textAlignVertical: 'center',
     lineHeight: 40,
-    color: 'white'
+    color: FontColor
   }
 });

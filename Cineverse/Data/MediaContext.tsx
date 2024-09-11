@@ -30,22 +30,20 @@ export const MediaProvider: React.FC<MediaProviderProps> = ({ children }) => {
     const [media, setMedia] = useState<Media[] | null>(null);
 
     useEffect(() => {
-        const fetchMediaData = async () => {
-            try {
-                const mediaSnapshot = await firebase.firestore().collection('media').get();
-                const mediaData: Media[] = mediaSnapshot.docs.map(doc => ({
-                    
-                    ...doc.data() as Media
-                }));
-                setMedia(mediaData);
+        // Real-time listener for Firestore collection
+        const unsubscribe = firebase.firestore().collection('media').onSnapshot(snapshot => {
+            const mediaData: Media[] = snapshot.docs.map(doc => ({
+                ...doc.data() as Media,
+                id: doc.id // Ensure the ID is included if needed
+            }));
+            setMedia(mediaData);
+            console.log("Media data updated");
+        }, error => {
+            console.error('Error fetching media data:', error);
+        });
 
-                console.log("Fetching media called")
-            } catch (error) {
-                console.error('Error fetching media data:', error);
-            }
-        };
-
-        fetchMediaData();
+        // Cleanup listener on unmount
+        return () => unsubscribe();
     }, []);
 
     return (

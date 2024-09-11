@@ -1,5 +1,5 @@
 export interface Comment {
-    commentId: string;
+    id: string;
     commentText: string;
     likes: number;
     dislikes: number;
@@ -7,6 +7,6 @@ export interface Comment {
     username: string;
     timestamp: string;
     flags: number;
-    markedSpoiler: boolean;
+    publicSpoiler: boolean;
     episodeId: number
   }
