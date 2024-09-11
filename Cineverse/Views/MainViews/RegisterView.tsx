@@ -100,7 +100,8 @@ export default function RegisterView() {
             flags: 0
         };
 
-        await firebase.database().ref(`/users/${uid}`).set({ initialData });
+        //await firebase.database().ref(`/users/${uid}`).set({ initialData });
+        await firebase.firestore().collection('users').doc(uid).set(initialData);
 
         if (response.user) {
             Alert.alert('Account Created!');

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity, ActivityIndicator, Modal, 
   TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import firebase from 'firebase/compat';
@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import ThreadCard from '../../ViewComponents/ThreadComponents/ThreadCard';
 import Checkbox from 'expo-checkbox';
 import { useUser } from "../../Data/UserContext"
+import ThreadBubble from '../../ViewComponents/ThreadComponents/ThreadBubble';
 
 // View displayed When no comments are present
 const NoCommentsView = ({ onCreateComment }: { onCreateComment: () => void }) => {
@@ -37,6 +38,56 @@ const PostCommentButton = ({ onCreateComment }: { onCreateComment: () => void })
   );
 }
 
+const ThreadViewFooter = ({ mediaData, currentEpisode }: { mediaData: Media, currentEpisode: number }) => {
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  const startEpisode = Math.max(1, currentEpisode - 2);
+  const endEpisode = mediaData.numberOfEpisodes;
+  
+  // Generate episodes list
+  const episodes = [
+    ...Array.from({ length: endEpisode - startEpisode + 1 }, (_, index) => startEpisode + index),
+    ...Array.from({ length: currentEpisode - 2 }, (_, index) => index + 1).filter(ep => ep < startEpisode),
+  ];
+
+  const threads = episodes.map(episodeNumber => {
+    const threadBubbleColor = episodeNumber === currentEpisode ? '#333333' : '#008080';
+    const buttonDisabled = episodeNumber === currentEpisode ? true : false
+
+    return (
+      <View style={styles.test} key={episodeNumber}>
+        <ThreadBubble 
+          episodeNumber={episodeNumber} 
+          mediaData={mediaData} 
+          threadBubbleColor={threadBubbleColor}
+          buttonDisabled={buttonDisabled}
+        />
+      </View>
+    );
+  });
+
+  useEffect(() => {
+    if (scrollViewRef.current) {
+      const episodeWidth = 100;
+      const offset = episodeWidth * (episodes.indexOf(currentEpisode) - 2);
+      scrollViewRef.current.scrollTo({ x: offset, animated: false });
+    }
+  }, [currentEpisode, episodes]);
+
+  return (
+    <View style={styles.footer}>
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.footer}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+      >
+        {threads}
+      </ScrollView>
+    </View>
+  );
+};
+
 
 export default function ThreadView() {
   const route = useRoute();
@@ -50,34 +101,49 @@ export default function ThreadView() {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
 
   const user = useUser();
-
+  
   useEffect(() => {
-    const fetchComments = async () => {
-      setLoading(true);
-      try {
-        const commentsRef = firebase.firestore()
-          .collection('media')
-          .doc(mediaData.id)
-          .collection('comments')
-          .where('episodeId', '==', episodeNumber)
-          .orderBy('timestamp');
-
-        const snapshot = await commentsRef.get();
+    const fetchComments = () => {
+      const commentsRef = firebase.firestore()
+        .collection('media')
+        .doc(mediaData.id)
+        .collection('comments')
+        .where('episodeId', '==', episodeNumber)
+        .orderBy('timestamp');
+      
+      // Use onSnapshot to listen for real-time updates
+      const unsubscribe = commentsRef.onSnapshot(async (snapshot) => {
         const commentsData: any[] = [];
-
-        snapshot.forEach((doc) => {
-          commentsData.push({ id: doc.id, ...doc.data() });
-        });
+  
+        for (const doc of snapshot.docs) {
+          const commentData = { id: doc.id, ...doc.data() };
+  
+          const userCommentRef = firebase.firestore()
+            .collection('userComments')
+            .doc(user?.uid)
+            .collection(mediaData.id)
+            .doc(doc.id);
+  
+          const userCommentSnapshot = await userCommentRef.get();
+          const userCommentData = userCommentSnapshot.exists ? userCommentSnapshot.data() : {};
+  
+          commentsData.push({
+            ...commentData,
+            userSpoiler: userCommentData?.userSpoiler || false,
+          });
+        }
+  
         setComments(commentsData);
-      } catch (error) {
-        console.error('Error fetching comments: ', error);
-      } finally {
         setLoading(false);
-      }
+      });
+  
+      return () => unsubscribe();
     };
-
-    fetchComments();
-  }, [mediaData.id]);
+  
+    if (mediaData.id) {
+      fetchComments();
+    }
+  }, [mediaData.id, episodeNumber, user?.uid]);
 
   const handleCreateComment = () => {
     setModalVisible(true);
@@ -85,50 +151,79 @@ export default function ThreadView() {
 
   const handleSubmitComment = async () => {
     if (isSubmitDisabled) return;
-
+  
     const commentData = {
-      commentText: commentText,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      markedSpoiler: isChecked,
-      dislikes: 0,
-      likes: 0,
-      userId: user?.uid,
-      username: user?.username,
-      flags: 0,
-      episodeId: episodeNumber,
+        commentText: commentText,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        publicSpoiler: isChecked,
+        dislikes: 0,
+        likes: 0,
+        userId: user?.uid,
+        username: user?.username,
+        flags: 0,
+        episodeId: episodeNumber,
     };
-
+  
+    const userSpecificData = {
+      ...commentData,  
+      userSpoiler: false,
+      commentLiked: false,
+      commentDisliked: false
+    };
+  
     try {
-      await firebase.firestore()
-        .collection('media')
-        .doc(mediaData.id)
-        .collection('comments')
-        .add(commentData);
-
-      setModalVisible(false);
-      setCommentText('');
-      setIsChecked(false);
-
-      // Fetch updated comments after submission
-      const commentsRef = firebase.firestore()
-        .collection('media')
-        .doc(mediaData.id)
-        .collection('comments')
-        .where('episodeId', '==', episodeNumber)
-        .orderBy('timestamp');
-
-      const snapshot = await commentsRef.get();
-      const commentsData: any[] = [];
-
-      snapshot.forEach((doc) => {
-        commentsData.push({ id: doc.id, ...doc.data() });
-      });
-      setComments(commentsData);
-
+        // Generate a unique comment ID
+        const commentId = firebase.firestore().collection('media').doc(mediaData.id).collection('comments').doc().id;
+  
+        // Start a batch to write both to media comments and userComments
+        const batch = firebase.firestore().batch();
+  
+        // Reference to the media comments collection
+        const mediaCommentRef = firebase.firestore()
+            .collection('media')
+            .doc(mediaData.id)
+            .collection('comments')
+            .doc(commentId);
+  
+        // Reference to the userComments collection
+        const userCommentRef = firebase.firestore()
+          .collection('userComments')
+          .doc(mediaData.id)
+          .collection(user!.uid)
+          .doc(commentId);
+  
+        // Add to media comments
+        batch.set(mediaCommentRef, { ...commentData, id: commentId });
+  
+        // Add to userComments
+        batch.set(userCommentRef, userSpecificData);
+  
+        await batch.commit();
+  
+        setModalVisible(false);
+        setCommentText('');
+        setIsChecked(false);
+  
+        // Fetch updated comments after submission
+        const commentsRef = firebase.firestore()
+            .collection('media')
+            .doc(mediaData.id)
+            .collection('comments')
+            .where('episodeId', '==', episodeNumber)
+            .orderBy('timestamp');
+  
+        const snapshot = await commentsRef.get();
+        const commentsData: any[] = [];
+  
+        snapshot.forEach((doc) => {
+            commentsData.push({ id: doc.id, ...doc.data() });
+        });
+        setComments(commentsData);
+  
     } catch (error) {
-      console.error('Error submitting comment: ', error);
+        console.error('Error submitting comment: ', error);
     }
-  };
+};
 
   const handleCloseModal = () => {
     setCommentText('');
@@ -138,9 +233,9 @@ export default function ThreadView() {
   const handleTextChange = (text: string) => {
     setCommentText(text);
 
-    // Count words, excluding spaces
+    // Count words how many words -- might change the number
     const wordCount = text.trim().split(/\s+/).filter(word => word).length;
-    setIsSubmitDisabled(wordCount < 4);
+    setIsSubmitDisabled(wordCount < 1);
   };
 
   if (loading) {
@@ -163,10 +258,11 @@ export default function ThreadView() {
         ) : (
           <ScrollView>
               {comments.map((comment) => (
-                <ThreadCard key={comment.id} comment={comment} blur={comment.markedSpoiler} />
+                <ThreadCard key={comment.id} mediaId={mediaData.id} comment={comment} />
               ))} 
           </ScrollView>
         )}
+        <ThreadViewFooter mediaData={mediaData} currentEpisode={episodeNumber}/>
       </View>
 
       <Modal
@@ -294,7 +390,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   submitButtonDisabled: {
-    backgroundColor: '#555555',
+    backgroundColor: '#333333',
   },
   submitButtonText: {
     color: 'white',
@@ -321,5 +417,11 @@ const styles = StyleSheet.create({
   },
   closeModalButton: {
     marginBottom: 30,
+  },
+  footer: {
+    flexDirection: 'row'
+  },
+  test: {
+    marginBottom: 30
   }
 });

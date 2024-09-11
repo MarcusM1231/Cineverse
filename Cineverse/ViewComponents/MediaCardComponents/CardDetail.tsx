@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, StyleSheet, Image} from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useRoute } from '@react-navigation/native';
 import { Media } from '../../Data/MediaContext';
 import { ScrollView } from "react-native";
@@ -7,30 +7,39 @@ import { useState } from 'react';
 import ThreadBubble from "../ThreadComponents/ThreadBubble";
 
 const ActiveButtonColor = "#008080"
+const InactiveButtonColor = "#333333"
+const FontColor = "#D3D3D3"
 
-//Displays a label indicating movie or show
-const MediaTypeLabel = ({ mediaType }: { mediaType: number }) =>{
-    var mediaText;
+const MediaTypeLabel = ({ mediaType }: { mediaType: number }) => {
+    const [movieSaved, setMovieSaved] = useState(false)
 
-    if(mediaType === 0){
-        mediaText = "TV Show"
-    }else{
-        mediaText = "Movie"
+    const savedButtonPressed = () => {
+        if (!movieSaved) {
+            setMovieSaved(true);
+        } else {
+            setMovieSaved(false)
+        }
     }
-    return(
-        
-        <View>
-            <Text style={styles.mediaType}>{mediaText}</Text>
+    return (
+        <View style={styles.saveLabelView}>
+            <TouchableOpacity onPress={savedButtonPressed}>
+                <Ionicons name="bookmark" size={30} color={movieSaved ? ActiveButtonColor : '#D3D3D3'} />
+            </TouchableOpacity>
+            <View style={styles.labelbubble}>
+                <Text style={styles.mediaType}>{mediaType === 0 ? "TV Show" : "Movie"}</Text>
+            </View>
         </View>
+
+
     );
 }
 
 //Displays all the other details such as title image, summary, likes, and thread list
 const CardDetailInfo = () => {
     const route = useRoute();
-    const {mediaData} = route.params as {mediaData: Media}
+    const { mediaData } = route.params as { mediaData: Media }
 
-    if(!mediaData){
+    if (!mediaData) {
         return <Text>Data not available</Text>
     }
 
@@ -38,71 +47,76 @@ const CardDetailInfo = () => {
     //const [dislikes, setDisLikes] = useState(mediaData.dislikes);
 
     //Handles the like button
-    const likeButtonPress = () =>{
+    const likeButtonPress = () => {
         console.log('liked pressed')
     };
 
     //Handles the dislike button
-    const dislikeButtonPress = () =>{
+    const dislikeButtonPress = () => {
         console.log('disliked pressed')
     };
 
-    const threads = Array.from({length: mediaData.numberOfEpisodes}, (_, index) => (
+    const threads = Array.from({ length: mediaData.numberOfEpisodes }, (_, index) => (
         <View key={index}>
-            <ThreadBubble episodeNumber={index + 1} mediaData={mediaData} />
+            <ThreadBubble 
+                episodeNumber={index + 1} 
+                mediaData={mediaData}
+                threadBubbleColor={ActiveButtonColor} 
+                buttonDisabled={false}/>
         </View>
     ))
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator = {false}>
-
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Text style={styles.mediaTitle}>{mediaData.title}</Text>
-                    <MediaTypeLabel mediaType={mediaData.type} />
+                    <View style={styles.saveLabelView}>
+                        <MediaTypeLabel mediaType={mediaData.type} />
+                    </View>
                 </View>
-            
-            <View style={styles.imageContainer}>
-                <Image style={styles.imageStyle} source={{uri: mediaData.image}} />
-            </View>
 
-            <View style={styles.likesDislikesContainer}>
-                <View style={styles.likesDislikesContainer}>
-                    <TouchableOpacity onPress={likeButtonPress} >
-                        <Ionicons style={[styles.likesDislikesIcon, { color: mediaData.likedAlready ? ActiveButtonColor : "white", }]} name="heart" />
-                    </TouchableOpacity>
-                    <Text style={styles.likesDislikesText}>{mediaData.likes}</Text>
+                <View style={styles.imageContainer}>
+                    <Image style={styles.imageStyle} source={{ uri: mediaData.image }} />
                 </View>
 
                 <View style={styles.likesDislikesContainer}>
-                    <TouchableOpacity onPress={dislikeButtonPress}>
-                        <Ionicons style={[styles.likesDislikesIcon, { color: mediaData.dislikedAlready ? 'red' : 'white' }]} name="thumbs-down" />
-                    </TouchableOpacity>                   
-                    <Text style={styles.likesDislikesText}>{mediaData.dislikes}</Text>
+                    <View style={styles.likesDislikesContainer}>
+                        <TouchableOpacity onPress={likeButtonPress} >
+                            <Ionicons style={[styles.likesDislikesIcon, { color: mediaData.likedAlready ? ActiveButtonColor : FontColor, }]} name="heart" />
+                        </TouchableOpacity>
+                        <Text style={styles.likesDislikesText}>{mediaData.likes}</Text>
+                    </View>
+
+                    <View style={styles.likesDislikesContainer}>
+                        <TouchableOpacity onPress={dislikeButtonPress}>
+                            <Ionicons style={[styles.likesDislikesIcon, { color: mediaData.dislikedAlready ? 'red' : FontColor }]} name="thumbs-down" />
+                        </TouchableOpacity>
+                        <Text style={styles.likesDislikesText}>{mediaData.dislikes}</Text>
+                    </View>
                 </View>
-            </View>
 
-            <View style={styles.summaryContainer}>
-                <Text style={styles.summaryText}>{mediaData.summary}</Text>
-            </View>
-
-            <View style={styles.mediaDetails}>
-                <Text style={styles.summaryText}>Release Date: {mediaData.releaseDate}</Text>
-                <Text style={styles.summaryText}>Rating: {mediaData.rating}</Text>
-            </View>
-
-            <View style={styles.horizontalLine}></View>
-
-            <View>
-                <Text style={styles.threadsListTitle}>{mediaData.type === 1 ? 'Movie Thread': 'Episdode Threads'}:</Text>
-                <View style={styles.threads}>
-                    {threads}
+                <View style={styles.summaryContainer}>
+                    <Text style={styles.summaryText}>{mediaData.summary}</Text>
                 </View>
+
+                <View style={styles.mediaDetails}>
+                    <Text style={styles.summaryText}>Release Date: {mediaData.releaseDate}</Text>
+                    <Text style={styles.summaryText}>Rating: {mediaData.rating}</Text>
+                </View>
+
+                <View style={styles.horizontalLine}></View>
+
+                <View>
+                    <Text style={styles.threadsListTitle}>{mediaData.type === 1 ? 'Movie Thread' : 'Episdode Threads'}:</Text>
+                    <View style={styles.threads}>
+                        {threads}
+                    </View>
+                </View>
+
             </View>
-            
-        </View>
         </ScrollView>
-        
+
     )
 }
 
@@ -114,10 +128,10 @@ export default function CardDetail() {
     )
 }
 
-const styles = StyleSheet.create ({
+const styles = StyleSheet.create({
     container: {
-        flex: 1, 
-        paddingTop: 10,  
+        flex: 1,
+        paddingTop: 10,
         paddingLeft: 5,
         backgroundColor: "#121212"
     },
@@ -133,11 +147,11 @@ const styles = StyleSheet.create ({
     },
     mediaTitle: {
         fontSize: 25,
-        width:'auto',
+        width: 'auto',
         maxWidth: 250,
         fontWeight: "bold",
-        color: 'white'
-    }, 
+        color: FontColor
+    },
     mediaType: {
         marginRight: 10,
         backgroundColor: ActiveButtonColor,
@@ -146,7 +160,7 @@ const styles = StyleSheet.create ({
         width: 80,
         textAlign: 'center',
         overflow: 'hidden',
-        color: 'white'
+        color: FontColor
     },
     imageContainer: {
         width: 300,
@@ -157,10 +171,10 @@ const styles = StyleSheet.create ({
         borderRadius: 10,
         overflow: 'hidden',
         borderWidth: 2,
-        alignSelf: 'center', 
+        alignSelf: 'center',
         borderColor: '#333333',
         marginBottom: 30,
-        marginTop: 20
+        marginTop: 20,
     },
     imageStyle: {
         width: '100%',
@@ -168,15 +182,16 @@ const styles = StyleSheet.create ({
         resizeMode: 'cover'
     },
     summaryContainer: {
-        width: 380,
-        backgroundColor: '#333333',
-        alignSelf: 'center',
-        justifyContent: 'center',
+        width: '98%',
+        height: 'auto',
+        marginHorizontal: 0,
+        backgroundColor: InactiveButtonColor,
         padding: 15,
+        paddingBottom: 30,
         borderRadius: 20
     },
     summaryText: {
-        color: 'white'
+        color: FontColor
     },
     mediaDetails: {
         marginTop: 20,
@@ -194,21 +209,29 @@ const styles = StyleSheet.create ({
     },
     likesDislikesText: {
         fontSize: 16,
-        color: 'white',
-        
+        color: FontColor,
+
     },
     threadsListTitle: {
         fontSize: 20,
-        color: 'white'
+        color: FontColor
     },
     threads: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        marginTop: 15,        
-    },  
+        marginTop: 15,
+    },
     horizontalLine: {
-        borderBottomColor: '#333333',
-        borderBottomWidth: 1,   
-        marginVertical: 15,  
-      },
+        borderBottomColor: ActiveButtonColor,
+        borderBottomWidth: 1,
+        marginVertical: 15,
+        marginHorizontal: -10,
+    },
+    saveLabelView: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    labelbubble: {
+        marginLeft: 10
+    }
 })

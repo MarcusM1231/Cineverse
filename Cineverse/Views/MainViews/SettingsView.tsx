@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation, NavigationProp  } from '@react-navigation/native';
 import firebase from 'firebase/compat';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Define the type for each setting item
 type SettingItem = {
@@ -45,12 +46,22 @@ const showLogoutConfirmation = () => {
 };
 
 const handleLogout = async () => {
-       try {
-          await firebase.auth().signOut();
-
-        } catch (error: any) {
-          Alert.alert("Error: ", error.message)
-        }
+  const currentUser = firebase.auth().currentUser;
+  if (currentUser) {
+      const userId = currentUser.uid;
+      const usernameKey = `username-${userId}`;
+      const imageKey = `profileImage-${userId}`;
+      const emailKey = `email-${userId}`;
+      
+      // Clear cache for the current user
+      await AsyncStorage.multiRemove([usernameKey, imageKey, emailKey]);
+      
+      // Sign out from Firebase
+      await firebase.auth().signOut();
+      
+      // Optionally reset user state in your context to null
+      //setUser(null);
+  }
 };
 
 export default function SettingsView() {

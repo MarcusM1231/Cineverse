@@ -40,11 +40,23 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     
                 // Fetch username if not cached
                 if (!cachedUsername) {
-                    const userDataSnapshot = await firebase.database().ref(`/users/${userId}`).once('value');
-                    const userData = userDataSnapshot.val();
-                    username = userData?.initialData?.username || '';
-                    if (username) {
-                        await AsyncStorage.setItem(usernameKey, username);
+                    //const userDataSnapshot = await firebase.database().ref(`/users/${userId}`).once('value');
+                    const userDoc = await firebase.firestore().collection('users').doc(userId).get();
+                    //const userData = userDataSnapshot.val();
+                    const userData = userDoc.data();
+                    // username = userData?.initialData?.username || '';
+                    // if (username) {
+                    //     await AsyncStorage.setItem(usernameKey, username);
+                    // }
+                    if (userData) {
+                        username = userData.username || '';
+                        email = userData.email || currentUser.email || '';
+                        imageUrl = userData.profileImage || '';
+
+                        // Cache fetched data
+                        if (username) await AsyncStorage.setItem(usernameKey, username);
+                        if (email) await AsyncStorage.setItem(emailKey, email);
+                        if (imageUrl) await AsyncStorage.setItem(imageKey, imageUrl);
                     }
                 }
     

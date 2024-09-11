@@ -6,8 +6,8 @@ import firebase from '../../firebase/firebaseConfig';
 import styles from '../../css/LoggedOutStylesheet';
 
 export default function LoginView() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('momoore1231@gmail.com');
+  const [password, setPassword] = useState('test123');
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation<NativeStackNavigationProp<any>>();

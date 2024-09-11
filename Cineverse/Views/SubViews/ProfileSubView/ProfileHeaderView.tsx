@@ -52,30 +52,25 @@ const SettingGear = () => {
 const FollersFollowingCount = () => {
     const [followersCount, setFollowersCount] = useState(0);
     const [followingCount, setFollowingCount] = useState(0);
+    const user = useUser();
 
-    //Fetches users following/follower count
-    // useEffect(() => {
-    //     const user = firebase.auth().currentUser;
-    //     if (user) {
-    //         const userRef = firebase.database().ref(`/users/${user.uid}`);
+    useEffect(() => {
+        if (user) {
+            const userRef = firebase.firestore().collection('users').doc(user.uid);
 
-    //         // Attach an event listener for any value changes in the user node
-    //         const onDataChange = (snapshot: any) => {
-    //             const userData = snapshot.val();
-    //             if (userData) {
-    //                 setFollowersCount(userData.initialData.followers);
-    //                 setFollowingCount(userData.initialData.following);
-    //             }
-    //         };
+            // Set up real-time listener for changes in the user's followers/following counts
+            const unsubscribe = userRef.onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    setFollowersCount(data?.followers || 0);
+                    setFollowingCount(data?.following || 0);
+                }
+            });
 
-    //         userRef.on('value', onDataChange);
-
-    //         // Return a cleanup function to detach the event listener when component unmounts
-    //         return () => {
-    //             userRef.off('value', onDataChange);
-    //         };
-    //     }
-    // }, []);
+            // Clean up the listener when the component is unmounted
+            return () => unsubscribe();
+        }
+    }, [user]);
 
     return (
         <View style={styles.followingFollowersContainer}>
