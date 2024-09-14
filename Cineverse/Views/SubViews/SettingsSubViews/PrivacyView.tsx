@@ -37,7 +37,7 @@ export default function PrivacyView() {
       <Switch
         value={isPrivate}
         onValueChange={handleSwitchToggle}
-        trackColor={{ false: '#767577', true: '#008080' }}
+        trackColor={{ false: '#767577', true: '#013b3b' }}
       />
       <Text style={styles.explanation}>
         {isPrivate ? 'Your account is private. Only approved followers can see your posts.' : 'Your account is public. Anyone can see your posts and follow you.'}

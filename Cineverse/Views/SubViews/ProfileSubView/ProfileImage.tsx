@@ -7,6 +7,9 @@ import firebase from 'firebase/compat';
 
 import { useUser } from "../../../Data/UserContext";
 
+const SecondaryColor = '#333333'
+const ThirdColor = '#008080'
+
 export default function ProfileImage() {
     const [loading, setLoading] = useState(false);
     const user = useUser();
@@ -22,7 +25,7 @@ export default function ProfileImage() {
         } else {
             // Handle image loading if needed
             loadImageFromFirebase();
-            console.log("Fire")
+            console.log("Loading from firebase")
         }
     }, []);
 
@@ -166,7 +169,7 @@ export default function ProfileImage() {
 
     return (
         <View style={styles.profileImageContainer}>
-            {loading && <ActivityIndicator size="small" color="white" style={styles.test} />}
+            {loading && <ActivityIndicator size="small" color="white" style={styles.loadingIndicator} />}
 
             <View style={styles.imageWrapper}>
                 {profileImage ? (
@@ -174,7 +177,7 @@ export default function ProfileImage() {
                         <Image source={{ uri: profileImage }} style={styles.profileImage} />
                         <View style={styles.removeButtonContainer}>
                             <TouchableOpacity style={styles.removeButton} onPress={removeProfileImageConfirmation}>
-                                <Ionicons name='close-circle' size={20} color='#008080' />
+                                <Ionicons name='close-circle' size={20} color={ThirdColor}/>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -195,7 +198,7 @@ const styles = StyleSheet.create({
         position: 'relative'
     },
     profileImage: { 
-        backgroundColor: '#333333',
+        backgroundColor: SecondaryColor,
         fontSize: 42,
         borderRadius: 20,
         padding: 30,
@@ -227,7 +230,7 @@ const styles = StyleSheet.create({
         bottom: -7,
         right: -10
     },
-    test: {
+    loadingIndicator: {
         padding: 10
     }
 });

@@ -192,7 +192,7 @@ const CommentVotes = ({userLiked, userDisliked, mediaId, comment, user, setUserL
 
             <View style={styles.votesContent}>
                 <TouchableOpacity onPress={() => {votePressed(false)}} disabled={buttonDisabled}>
-                    <Ionicons name='chevron-down-circle' style={[styles.votesIcon, { color: userDisliked ? 'red' : "white", }]} />
+                    <Ionicons name='chevron-down-circle' style={[styles.votesIcon, { color: userDisliked ? '#ad1c05' : "white", }]} />
                 </TouchableOpacity>
                 <Text style={styles.votesNumber}>{dislikes}</Text>
             </View>

@@ -6,7 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import ThreadBubble from "../ThreadComponents/ThreadBubble";
 
-const ActiveButtonColor = "#008080"
+// const ActiveButtonColor = "#008080"
+const ActiveButtonColor = '#013b3b'
 const InactiveButtonColor = "#333333"
 const FontColor = "#D3D3D3"
 
@@ -185,7 +186,7 @@ const styles = StyleSheet.create({
         width: '98%',
         height: 'auto',
         marginHorizontal: 0,
-        backgroundColor: InactiveButtonColor,
+        backgroundColor: '#013b3b',
         padding: 15,
         paddingBottom: 30,
         borderRadius: 20

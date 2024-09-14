@@ -11,6 +11,8 @@ type MediaCategoryProps = {
   mediaData: Media[];
 }
 
+const BackgroundColor = '#121212'
+
 // Displays the first six media cards for each section on home view
 const HomeCategoryView = (props: MediaCategoryProps) => {  
   const [shuffledMedia, setShuffledMedia] = useState<Media[]>([]);
@@ -80,7 +82,7 @@ const styles = StyleSheet.create({
     color: 'white'
   },
   horizontalLine: {
-    borderBottomColor: '#121212',
+    borderBottomColor: BackgroundColor,
     borderBottomWidth: 1,
     marginVertical: 1,
   },
