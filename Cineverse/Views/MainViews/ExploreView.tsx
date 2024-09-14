@@ -5,7 +5,6 @@ import MovieView from '../SubViews/ExploreSubViews/MovieView'
 import ShowView from '../SubViews/ExploreSubViews/ShowView'
 import styles from '../../css/ExploreStylesheet'
 
-//Props
 type ButtonProp = {
   type: number;
   title: string;
@@ -13,14 +12,12 @@ type ButtonProp = {
   isSelected: boolean;
 }
 
-//Variables
 const homeCategory = "Home"
 const showCategory = "TV Shows"
 const movieCategory = "Movies"
 
-const ActiveButtonColor = "#008080"
-const InActiveButtonColor = "#333333"
-
+const PrimaryColor = '#013b3b'
+const SecondaryColor = '#333333'
 
 const CategoryButtons = (props: ButtonProp) => {
   var currentCategory: string;
@@ -38,15 +35,13 @@ const CategoryButtons = (props: ButtonProp) => {
   }
   return(
     <View>
-      <TouchableOpacity style={[styles.buttonCategory, {backgroundColor: props.isSelected ? ActiveButtonColor : InActiveButtonColor}]} onPress={props.onPress}>
+      <TouchableOpacity style={[styles.buttonCategory, {backgroundColor: props.isSelected ? PrimaryColor : SecondaryColor}]} onPress={props.onPress}>
         <Text style={styles.buttonTextStyle}>{props.title}</Text>
       </TouchableOpacity>
     </View>
   )
 }
 
-
-//View
 export default function ExploreView() {
   const [currentCategory, setCurrentCategory] = useState(homeCategory);
 

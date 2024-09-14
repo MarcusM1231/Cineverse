@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useState } from 'react';
 
-const AccentColor = '#008080';
+const AccentColor = '#013b3b';
 
 export default function FeedbackView() {
   const [feedback, setFeedback] = useState('');

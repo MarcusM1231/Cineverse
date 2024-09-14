@@ -10,6 +10,11 @@ import Checkbox from 'expo-checkbox';
 import { useUser } from "../../Data/UserContext"
 import ThreadBubble from '../../ViewComponents/ThreadComponents/ThreadBubble';
 
+
+const PrimaryColor = '#013b3b'
+const SecondaryColor = '#333333'
+const BackgroundColor = '#121212'
+
 // View displayed When no comments are present
 const NoCommentsView = ({ onCreateComment }: { onCreateComment: () => void }) => {
   return (
@@ -51,7 +56,7 @@ const ThreadViewFooter = ({ mediaData, currentEpisode }: { mediaData: Media, cur
   ];
 
   const threads = episodes.map(episodeNumber => {
-    const threadBubbleColor = episodeNumber === currentEpisode ? '#333333' : '#008080';
+    const threadBubbleColor = episodeNumber === currentEpisode ? SecondaryColor : PrimaryColor;
     const buttonDisabled = episodeNumber === currentEpisode ? true : false
 
     return (
@@ -241,7 +246,7 @@ export default function ThreadView() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#008080" />
+        <ActivityIndicator size="large" color={PrimaryColor}/>
       </View>
     );
   }
@@ -277,7 +282,7 @@ export default function ThreadView() {
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Add Comment</Text>
                 <TouchableOpacity onPress={handleCloseModal} style={styles.closeModalButton}>
-                  <Ionicons name="close" size={24} color="red" />
+                  <Ionicons name="close" size={24} color="#ad1c05" />
                 </TouchableOpacity>
               </View>
               <TextInput
@@ -295,7 +300,7 @@ export default function ThreadView() {
                   value={isChecked}
                   onValueChange={setIsChecked}
                   style={styles.markSpoilerCheckbox}
-                  color={'#008080'}
+                  color={PrimaryColor}
                 />
               </View>
               <TouchableOpacity
@@ -316,7 +321,7 @@ export default function ThreadView() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: BackgroundColor,
   },
   noCommentsContainer: {
     flex: 1,
@@ -342,13 +347,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     borderRadius: 20,
-    backgroundColor: '#008080',
+    backgroundColor: PrimaryColor,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#121212',
+    backgroundColor: BackgroundColor,
   },
   buttonContainer: {
     alignItems: 'flex-end',
@@ -376,7 +381,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   textInput: {
-    backgroundColor: '#2c2c2c',
+    backgroundColor: SecondaryColor,
     color: 'white',
     padding: 10,
     height: 100,
@@ -384,13 +389,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   submitButton: {
-    backgroundColor: '#008080',
+    backgroundColor: PrimaryColor,
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
   },
   submitButtonDisabled: {
-    backgroundColor: '#333333',
+    backgroundColor: SecondaryColor,
   },
   submitButtonText: {
     color: 'white',

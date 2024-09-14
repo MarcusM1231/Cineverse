@@ -62,7 +62,7 @@ export default function AboutUsView() {
     },
     header: {
       fontSize: 25,
-      color: '#008080',
+      color: '#013b3b',
       marginBottom: 10,
       fontWeight: 'bold',
       textAlign: 'center'

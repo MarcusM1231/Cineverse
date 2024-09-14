@@ -6,20 +6,19 @@ import ProfileCommentsView from './ProfileCommentsView';
 import ProfileLikesView from './ProfileLikesView';
 import ProfileImage from './ProfileImage';
 import firebase from 'firebase/compat';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { useUser } from "../../../Data/UserContext"
 
 //Variables
-const ActiveButtonColor = "#008080"
-const InactiveButtonColor = "#333333"
+const PrimaryColor = '#013b3b'
+const SecondaryColor = '#333333'
+const BackgroundColor = '#121212'
 
 const commentCategory = "Comments";
 const collectionCategory = "Collections";
 const likeCategory = "Likes";
 
-//Displays users username
 const UsernameDisplay = () => {
     const user = useUser();
     return (
@@ -29,10 +28,7 @@ const UsernameDisplay = () => {
     );
 };
 
-/*
-Right now clicking gear will log user out. Will update this once Settings
-View gets implemented
-*/
+
 const SettingGear = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const goToSettings = () =>{
@@ -67,7 +63,6 @@ const FollersFollowingCount = () => {
                 }
             });
 
-            // Clean up the listener when the component is unmounted
             return () => unsubscribe();
         }
     }, [user]);
@@ -103,17 +98,17 @@ const ProfileCategories = () => {
         <View>
             <View style={styles.categoriesContainer}>
                 <TouchableOpacity onPress={() => handleCategoryChange(commentCategory)}>
-                    <Text style={[styles.categoriesText, {backgroundColor: currentCategory === commentCategory ? ActiveButtonColor : InactiveButtonColor}]}>
+                    <Text style={[styles.categoriesText, {backgroundColor: currentCategory === commentCategory ? PrimaryColor : SecondaryColor}]}>
                         {commentCategory}
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleCategoryChange(collectionCategory)}>
-                    <Text style={[styles.categoriesText, {backgroundColor: currentCategory === collectionCategory ? ActiveButtonColor : InactiveButtonColor}]}>
+                    <Text style={[styles.categoriesText, {backgroundColor: currentCategory === collectionCategory ? PrimaryColor : SecondaryColor}]}>
                         {collectionCategory}
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleCategoryChange(likeCategory)}>
-                    <Text style={[styles.categoriesText, {backgroundColor: currentCategory === likeCategory ? ActiveButtonColor : InactiveButtonColor}]}>
+                    <Text style={[styles.categoriesText, {backgroundColor: currentCategory === likeCategory ? PrimaryColor : SecondaryColor}]}>
                         {likeCategory}
                     </Text>
                 </TouchableOpacity>
@@ -152,15 +147,10 @@ export default function ProfileHeaderView() {
         flex: 1  
     },
     container: {
-      backgroundColor: '#121212',
+      backgroundColor: BackgroundColor,
       width: '100%'
     },
 
-    //Username Styles
-    pencilButton: {
-        fontSize: 20,
-        color: 'white'
-    },
     username: {
         fontSize: 27,
         marginRight: 8,
@@ -181,7 +171,7 @@ export default function ProfileHeaderView() {
 
     },
     profileImage: { 
-        backgroundColor: '#333333',
+        backgroundColor: SecondaryColor,
         fontSize: 42,
         borderRadius: 20,
         padding: 20,
@@ -231,7 +221,7 @@ export default function ProfileHeaderView() {
         marginHorizontal: 15,
         width: 95,
         textAlign: 'center',
-        backgroundColor: '#333333',
+        backgroundColor: SecondaryColor,
         color: 'white',
         padding: 10,
         borderRadius: 15,

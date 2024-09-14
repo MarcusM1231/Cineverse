@@ -93,7 +93,7 @@ const NotificationsView = () => {
         <Switch
           value={isNotificationsEnabled}
           onValueChange={handleEnableNotificationsToggle}
-          trackColor={{ false: '#767577', true: '#008080' }}
+          trackColor={{ false: '#767577', true: '#013b3b' }}
         />
       </View>
 
@@ -109,7 +109,7 @@ const NotificationsView = () => {
             <Switch
               value={notificationStates[option.id]}
               onValueChange={() => handleNotificationToggle(option.id)}
-              trackColor={{ false: isNotificationsEnabled ? '#767577' : '#555555', true: '#008080' }}
+              trackColor={{ false: isNotificationsEnabled ? '#767577' : '#555555', true: '#013b3b' }}
               thumbColor={isNotificationsEnabled ? '#f4f3f4' : '#888888'}
               disabled={!isNotificationsEnabled}
             />

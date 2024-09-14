@@ -11,6 +11,9 @@ type MediaCategoryProps = {
   mediaData: Media[];
 } 
 
+const BackgroundColor = '#121212'
+const FontColor = 'white'
+
 const ShowCategoryView = (props: MediaCategoryProps) => {  
   const [shuffledMedia, setShuffledMedia] = useState<Media[]>([]);
 
@@ -78,10 +81,10 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginLeft: 10,
     fontWeight: 'bold',
-    color: 'white'
+    color: FontColor
   },
   horizontalLine: {
-    borderBottomColor: '#121212',
+    borderBottomColor: BackgroundColor,
     borderBottomWidth: 1,   
     marginVertical: 1,  
   },

@@ -1,8 +1,10 @@
 import { StyleSheet } from "react-native";
 
 //Contains stylsheets for Login and Register Page
+const PrimaryColor = '#013b3b'
+const SecondaryColor = '#333333'
 const BackgroundColor = '#121212'
-const AccentColor = '#008080'
+const ThirdColor = '#008080'
 const FontColor = 'white'
 
 export default  StyleSheet.create({
@@ -30,7 +32,7 @@ export default  StyleSheet.create({
         paddingLeft: 16
     },
     button: {
-        backgroundColor: AccentColor,
+        backgroundColor: PrimaryColor,
         width: "80%",
         marginLeft: 30,
         marginRight: 30,
@@ -54,7 +56,7 @@ export default  StyleSheet.create({
         color: FontColor
     },
     footerLink: {
-        color: AccentColor,
+        color: ThirdColor,
         fontWeight: "bold",
         fontSize: 16
     },
@@ -78,12 +80,12 @@ export default  StyleSheet.create({
         marginTop: 5,
     },
     forgotPasswordLink: {
-        color: AccentColor,
+        color: ThirdColor,
         fontWeight: 'bold'
     },
     backButtonText: {
         marginTop: 20,
-        color: AccentColor,
+        color: ThirdColor,
         fontSize: 16,
         fontWeight: 'bold',
       },
