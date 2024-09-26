@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View} from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,6 +18,7 @@ import NotificationsView from '../SubViews/SettingsSubViews/NotificationsView';
 import PrivacyView from '../SubViews/SettingsSubViews/PrivacyView';
 import FeedbackView from '../SubViews/SettingsSubViews/FeedbackView';
 import AboutUsView from '../SubViews/SettingsSubViews/AboutUsView';
+import ViewingProfileView from '../SubViews/ProfileSubView/ViewingProfile/ViewingProfileView';
 
 //Variables
 const Tab = createBottomTabNavigator();
@@ -50,6 +51,21 @@ function Explore() {
             headerTintColor: InactiveIconColor,
             headerStyle: {backgroundColor: BackgroundColor}
           }}/>
+
+        <Stack.Screen name='ViewingProfileView' component={ViewingProfileView}
+          
+          options={{
+            title:'',
+            headerTintColor: InactiveIconColor,
+            headerStyle: {backgroundColor: BackgroundColor}
+          }}/>
+
+          <Stack.Screen name='SettingsView' component={SettingsView} 
+           options={({ navigation }) => ({
+            title: 'Settings',
+            headerTintColor: InactiveIconColor,
+            headerStyle: { backgroundColor: BackgroundColor },
+          })}/>
       </Stack.Navigator>
     )
   }
@@ -78,11 +94,11 @@ function Explore() {
             }}/>
 
         <Stack.Screen name='SettingsView' component={SettingsView} 
-          options={{
-            title:'Settings',
+           options={({ navigation }) => ({
+            title: 'Settings',
             headerTintColor: InactiveIconColor,
-            headerStyle: {backgroundColor: BackgroundColor}
-          }}/>
+            headerStyle: { backgroundColor: BackgroundColor },
+          })}/>
 
         <Stack.Screen name='Account' component={AccountView} 
           options={{

@@ -59,11 +59,11 @@ const CardDetailInfo = () => {
 
     const threads = Array.from({ length: mediaData.numberOfEpisodes }, (_, index) => (
         <View key={index}>
-            <ThreadBubble 
-                episodeNumber={index + 1} 
+            <ThreadBubble
+                episodeNumber={index + 1}
                 mediaData={mediaData}
-                threadBubbleColor={ActiveButtonColor} 
-                buttonDisabled={false}/>
+                threadBubbleColor={ActiveButtonColor}
+                buttonDisabled={false} />
         </View>
     ))
 

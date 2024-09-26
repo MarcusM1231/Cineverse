@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View} from 'react-native';
 import ProfileHeaderView from '../SubViews/ProfileSubView/ProfileHeaderView';
+import { useUser } from '../../Data/UserContext';
 
 /*
 This is the Profile view, the view with all the profile
@@ -8,9 +9,10 @@ functionality
 
 
 export default function ProfileView() {
+  const user = useUser();
     return (
       <View style={styles.container}>
-        <ProfileHeaderView />
+        <ProfileHeaderView userId={user.user?.uid}/>
     </View>
     );
   }

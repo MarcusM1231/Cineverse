@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity, ActivityIndicator, Modal, 
-  TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
+  TextInput, TouchableWithoutFeedback, Keyboard, FlatList } from 'react-native';
 import firebase from 'firebase/compat';
 import { useRoute } from '@react-navigation/native';
 import { Media } from '../../Data/MediaContext';
@@ -43,33 +43,13 @@ const PostCommentButton = ({ onCreateComment }: { onCreateComment: () => void })
   );
 }
 
-const ThreadViewFooter = ({ mediaData, currentEpisode }: { mediaData: Media, currentEpisode: number }) => {
+const ThreadViewFooter = React.memo(({ mediaData, currentEpisode } : {mediaData: Media, currentEpisode: number}) => {
   const scrollViewRef = useRef<ScrollView>(null);
 
   const startEpisode = Math.max(1, currentEpisode - 2);
   const endEpisode = mediaData.numberOfEpisodes;
-  
-  // Generate episodes list
-  const episodes = [
-    ...Array.from({ length: endEpisode - startEpisode + 1 }, (_, index) => startEpisode + index),
-    ...Array.from({ length: currentEpisode - 2 }, (_, index) => index + 1).filter(ep => ep < startEpisode),
-  ];
 
-  const threads = episodes.map(episodeNumber => {
-    const threadBubbleColor = episodeNumber === currentEpisode ? SecondaryColor : PrimaryColor;
-    const buttonDisabled = episodeNumber === currentEpisode ? true : false
-
-    return (
-      <View style={styles.test} key={episodeNumber}>
-        <ThreadBubble 
-          episodeNumber={episodeNumber} 
-          mediaData={mediaData} 
-          threadBubbleColor={threadBubbleColor}
-          buttonDisabled={buttonDisabled}
-        />
-      </View>
-    );
-  });
+  const episodes = Array.from({ length: endEpisode - startEpisode + 1 }, (_, index) => startEpisode + index);
 
   useEffect(() => {
     if (scrollViewRef.current) {
@@ -87,11 +67,19 @@ const ThreadViewFooter = ({ mediaData, currentEpisode }: { mediaData: Media, cur
         horizontal={true}
         showsHorizontalScrollIndicator={false}
       >
-        {threads}
+        {episodes.map(episodeNumber => (
+          <ThreadBubble 
+            key={episodeNumber} 
+            episodeNumber={episodeNumber} 
+            mediaData={mediaData} 
+            threadBubbleColor={episodeNumber === currentEpisode ? SecondaryColor : PrimaryColor} 
+            buttonDisabled={episodeNumber === currentEpisode} 
+          />
+        ))}
       </ScrollView>
     </View>
   );
-};
+});
 
 
 export default function ThreadView() {
@@ -114,41 +102,38 @@ export default function ThreadView() {
         .doc(mediaData.id)
         .collection('comments')
         .where('episodeId', '==', episodeNumber)
-        .orderBy('timestamp');
+        .orderBy('timestamp')
+        .limit(20);
       
       // Use onSnapshot to listen for real-time updates
       const unsubscribe = commentsRef.onSnapshot(async (snapshot) => {
-        const commentsData: any[] = [];
-  
-        for (const doc of snapshot.docs) {
-          const commentData = { id: doc.id, ...doc.data() };
-  
-          const userCommentRef = firebase.firestore()
+        const userCommentRefs = snapshot.docs.map(doc =>
+          firebase.firestore()
             .collection('userComments')
-            .doc(user?.uid)
+            .doc(user.user?.uid)
             .collection(mediaData.id)
-            .doc(doc.id);
-  
-          const userCommentSnapshot = await userCommentRef.get();
-          const userCommentData = userCommentSnapshot.exists ? userCommentSnapshot.data() : {};
-  
-          commentsData.push({
-            ...commentData,
-            userSpoiler: userCommentData?.userSpoiler || false,
-          });
-        }
-  
+            .doc(doc.id)
+        );
+
+        const userCommentSnapshots = await Promise.all(userCommentRefs.map(ref => ref.get()));
+
+        const commentsData = snapshot.docs.map((doc, index) => ({
+          id: doc.id,
+          ...doc.data(),
+          userSpoiler: userCommentSnapshots[index].exists ? userCommentSnapshots[index].data()!.userSpoiler : false,
+        }));
+
         setComments(commentsData);
         setLoading(false);
       });
-  
+
       return () => unsubscribe();
     };
   
     if (mediaData.id) {
       fetchComments();
     }
-  }, [mediaData.id, episodeNumber, user?.uid]);
+  }, [mediaData.id, episodeNumber, user.user?.uid]);
 
   const handleCreateComment = () => {
     setModalVisible(true);
@@ -163,8 +148,8 @@ export default function ThreadView() {
         publicSpoiler: isChecked,
         dislikes: 0,
         likes: 0,
-        userId: user?.uid,
-        username: user?.username,
+        userId: user.user?.uid,
+        username: user.user?.username,
         flags: 0,
         episodeId: episodeNumber,
     };
@@ -194,7 +179,7 @@ export default function ThreadView() {
         const userCommentRef = firebase.firestore()
           .collection('userComments')
           .doc(mediaData.id)
-          .collection(user!.uid)
+          .collection(user.user!.uid)
           .doc(commentId);
   
         // Add to media comments
@@ -246,28 +231,28 @@ export default function ThreadView() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={PrimaryColor}/>
+        <ActivityIndicator size="large" color={PrimaryColor} />
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      {comments.length !== 0 && !loading ? (
+      {comments.length > 0 && (
         <PostCommentButton onCreateComment={handleCreateComment} />
-      ) : (null)}
+      )}
       
       <View style={styles.scrollContainer}>
         {comments.length === 0 ? (
           <NoCommentsView onCreateComment={handleCreateComment} />
         ) : (
-          <ScrollView>
-              {comments.map((comment) => (
-                <ThreadCard key={comment.id} mediaId={mediaData.id} comment={comment} />
-              ))} 
-          </ScrollView>
+          <FlatList
+            data={comments}
+            renderItem={({ item }) => <ThreadCard key={item.id} mediaId={mediaData.id} comment={item} />}
+            keyExtractor={(item) => item.id}
+          />
         )}
-        <ThreadViewFooter mediaData={mediaData} currentEpisode={episodeNumber}/>
+        <ThreadViewFooter mediaData={mediaData} currentEpisode={episodeNumber} />
       </View>
 
       <Modal

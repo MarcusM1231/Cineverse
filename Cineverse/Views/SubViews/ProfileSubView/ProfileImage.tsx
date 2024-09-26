@@ -7,53 +7,57 @@ import firebase from 'firebase/compat';
 
 import { useUser } from "../../../Data/UserContext";
 
+const PrimaryColor = '#013b3b'
 const SecondaryColor = '#333333'
 const ThirdColor = '#008080'
 
 export default function ProfileImage() {
     const [loading, setLoading] = useState(false);
     const user = useUser();
-    const [profileImage, setProfileImage] = useState(user?.imageUrl || '');
+    const [profileImage, setProfileImage] = useState(user.user?.imageUrl || '');
 
-    const USERID = user?.uid;
-    const storageKey = `@profileImage-${USERID}`;
+    const userId = user.user?.uid;
+    const imageKey = `@profileImage-${userId}`;
 
     useEffect(() => {
-        if (user?.imageUrl) {
-            setProfileImage(user.imageUrl);
-            console.log("Image URL: ", user?.imageUrl)
+        async function FetchImage() {
+            const cachedImageUri = await AsyncStorage.getItem(imageKey);
+            console.log("Loading profile image from cache")
+        if (cachedImageUri) {
+            setProfileImage(cachedImageUri);
         } else {
             // Handle image loading if needed
-            loadImageFromFirebase();
-            console.log("Loading from firebase")
+            if(user.user?.imageUrl){
+                loadImageFromFirebase();
+                console.log("Loading profile image from firebase")
+            }else{
+                console.log("No image to load")
+            }
+            
         }
+        }
+        FetchImage();
+        
     }, []);
 
     const loadImageFromFirebase = async () => {
-        console.log("User Id: ", USERID)
-        if (USERID) {
+        if (userId) {
             try {
-                const userDoc = await firebase.firestore().collection('users').doc(USERID).get();
-                if (userDoc.exists) {
-                    const imageUrl = userDoc.data()?.profileImage;
-                    if (imageUrl) {
-                        setProfileImage(imageUrl);
-                        await saveImageToStorage(imageUrl);
-                        console.log("Saving to storage")
-                    } else {
-                        console.log("No Image to load from database");
-                        setProfileImage('');
-                    }
-                }
+                const userDoc = await firebase.firestore().collection('users').doc(userId).get();
+                const userData = userDoc.data();
+                await saveImageToStorage(userData?.profileImage);
+                
+                setProfileImage(userData?.profileImage);
             } catch (error) {
-                console.log('Error loading image from Firebase:', error);
+                console.log('Error loading image from Firebase Storage:', error);
+                setProfileImage('');
             }
         }
     };
 
     const saveImageToStorage = async (imageUri: string) => {
         try {
-            await AsyncStorage.setItem(storageKey, imageUri);
+            await AsyncStorage.setItem(imageKey, imageUri);
         } catch (error) {
             console.log('Error saving image to AsyncStorage:', error);
         }
@@ -63,8 +67,8 @@ export default function ProfileImage() {
         setLoading(true);
         setProfileImage('');
         try {
-            if (USERID) {
-                const userDoc = await firebase.firestore().collection('users').doc(USERID).get();
+            if (userId) {
+                const userDoc = await firebase.firestore().collection('users').doc(userId).get();
                 if (userDoc.exists && userDoc.data()?.profileImage) {
                     const imageUrl = userDoc.data()?.profileImage;
 
@@ -73,12 +77,12 @@ export default function ProfileImage() {
                     await imageRef.delete();
 
                     // Remove image URL from Firestore
-                    await firebase.firestore().collection('users').doc(USERID).update({
+                    await firebase.firestore().collection('users').doc(userId).update({
                         profileImage: firebase.firestore.FieldValue.delete(),
                     });
 
                     // Remove from cache
-                    await AsyncStorage.removeItem(storageKey);
+                    await AsyncStorage.removeItem(imageKey);
                 } else {
                     console.log('No image to delete');
                 }
@@ -103,14 +107,14 @@ export default function ProfileImage() {
             const blob = await response.blob();
 
             // Upload image to Firebase Storage
-            const imageRef = firebase.storage().ref().child(`profileImages/${USERID}`);
+            const imageRef = firebase.storage().ref().child(`profileImages/${userId}`);
             await imageRef.put(blob);
 
             // Get the download URL
             const downloadURL = await imageRef.getDownloadURL();
 
             // Save the download URL to Firestore
-            await firebase.firestore().collection('users').doc(USERID).set(
+            await firebase.firestore().collection('users').doc(userId).set(
                 { profileImage: downloadURL },
                 { merge: true }
             );
@@ -141,7 +145,7 @@ export default function ProfileImage() {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 3],
-            quality: 1,
+            quality: 0.2,
         });
 
         if (!result.canceled) {
