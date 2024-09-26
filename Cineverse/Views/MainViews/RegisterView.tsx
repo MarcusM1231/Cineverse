@@ -97,7 +97,8 @@ export default function RegisterView() {
             username: username,
             followers: 0,
             following: 0,
-            flags: 0
+            flags: 0,
+            accountPrivacy: false
         };
 
         //await firebase.database().ref(`/users/${uid}`).set({ initialData });

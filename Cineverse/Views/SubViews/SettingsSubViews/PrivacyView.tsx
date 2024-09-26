@@ -1,33 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Switch} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUser } from '../../../Data/UserContext';
 
 export default function PrivacyView() {
-  const [isPrivate, setIsPrivate] = useState(false);
-
-  useEffect(() => {
-    // Load the cached privacy setting on component mount
-    const loadPrivacySetting = async () => {
-      try {
-        const storedSetting = await AsyncStorage.getItem('privacySetting');
-        if (storedSetting !== null) {
-          setIsPrivate(JSON.parse(storedSetting));
-        }
-      } catch (error) {
-        console.error('Failed to load privacy setting:', error);
-      }
-    };
-
-    loadPrivacySetting();
-  }, []);
+  const userContext = useUser();
+  const [isPrivate, setIsPrivate] = useState(userContext.user?.accountPrivacy);
 
   const handleSwitchToggle = async (value: boolean) => {
     setIsPrivate(value);
     try {
-      // Cache the privacy setting
-      await AsyncStorage.setItem('privacySetting', JSON.stringify(value));
+      await userContext.updatePrivacySetting(userContext.user?.uid, value)
     } catch (error) {
-      console.error('Failed to save privacy setting:', error);
+      console.error('Failed to update privacy setting:', error);
     }
   };
 

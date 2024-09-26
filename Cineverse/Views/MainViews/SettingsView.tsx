@@ -60,8 +60,6 @@ const handleLogout = async () => {
       // Sign out from Firebase
       await firebase.auth().signOut();
       
-      // Optionally reset user state in your context to null
-      
   }
 };
 
