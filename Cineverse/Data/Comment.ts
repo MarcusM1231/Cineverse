@@ -8,5 +8,8 @@ export interface Comment {
     timestamp: string;
     flags: number;
     publicSpoiler: boolean;
-    episodeId: number
+    episodeId: number;
+    orginalCommentId: string;
+    replies: Comment[];
+    type: number;
   }

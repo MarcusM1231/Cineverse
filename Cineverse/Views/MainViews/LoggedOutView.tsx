@@ -1,8 +1,8 @@
 import { StyleSheet, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import LoginView from './LoginView';
-import RegisterView from './RegisterView';
+import LoginView from '../SubViews/LoggedOutSubViews/LoginView';
+import RegisterView from '../SubViews/LoggedOutSubViews/RegisterView';
 import ForgotPasswordView from '../SubViews/LoggedOutSubViews/ForgotPasswordView';
 
 //Variables

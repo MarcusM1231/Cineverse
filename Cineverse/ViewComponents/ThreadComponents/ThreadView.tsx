@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, ScrollView, Text, TouchableOpacity, ActivityIndicator, Modal, 
-  TextInput, TouchableWithoutFeedback, Keyboard, FlatList } from 'react-native';
+import {
+  StyleSheet, View, ScrollView, Text, TouchableOpacity, ActivityIndicator, Modal,
+  TextInput, TouchableWithoutFeedback, Keyboard, FlatList
+} from 'react-native';
 import firebase from 'firebase/compat';
 import { useRoute } from '@react-navigation/native';
 import { Media } from '../../Data/MediaContext';
 import { Ionicons } from '@expo/vector-icons';
-import ThreadCard from '../../ViewComponents/ThreadComponents/ThreadCard';
+import CommentCard from './CommentCard';
 import Checkbox from 'expo-checkbox';
 import { useUser } from "../../Data/UserContext"
-import ThreadBubble from '../../ViewComponents/ThreadComponents/ThreadBubble';
+import ThreadBubble from './ThreadBubble';
 
 
 const PrimaryColor = '#013b3b'
@@ -43,7 +45,7 @@ const PostCommentButton = ({ onCreateComment }: { onCreateComment: () => void })
   );
 }
 
-const ThreadViewFooter = React.memo(({ mediaData, currentEpisode } : {mediaData: Media, currentEpisode: number}) => {
+const ThreadViewFooter = React.memo(({ mediaData, currentEpisode }: { mediaData: Media, currentEpisode: number }) => {
   const scrollViewRef = useRef<ScrollView>(null);
 
   const startEpisode = Math.max(1, currentEpisode - 2);
@@ -68,12 +70,12 @@ const ThreadViewFooter = React.memo(({ mediaData, currentEpisode } : {mediaData:
         showsHorizontalScrollIndicator={false}
       >
         {episodes.map(episodeNumber => (
-          <ThreadBubble 
-            key={episodeNumber} 
-            episodeNumber={episodeNumber} 
-            mediaData={mediaData} 
-            threadBubbleColor={episodeNumber === currentEpisode ? SecondaryColor : PrimaryColor} 
-            buttonDisabled={episodeNumber === currentEpisode} 
+          <ThreadBubble
+            key={episodeNumber}
+            episodeNumber={episodeNumber}
+            mediaData={mediaData}
+            threadBubbleColor={episodeNumber === currentEpisode ? SecondaryColor : PrimaryColor}
+            buttonDisabled={episodeNumber === currentEpisode}
           />
         ))}
       </ScrollView>
@@ -94,7 +96,7 @@ export default function ThreadView() {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
 
   const user = useUser();
-  
+
   useEffect(() => {
     const fetchComments = () => {
       const commentsRef = firebase.firestore()
@@ -104,7 +106,7 @@ export default function ThreadView() {
         .where('episodeId', '==', episodeNumber)
         .orderBy('timestamp')
         .limit(20);
-      
+
       // Use onSnapshot to listen for real-time updates
       const unsubscribe = commentsRef.onSnapshot(async (snapshot) => {
         const userCommentRefs = snapshot.docs.map(doc =>
@@ -129,7 +131,7 @@ export default function ThreadView() {
 
       return () => unsubscribe();
     };
-  
+
     if (mediaData.id) {
       fetchComments();
     }
@@ -141,79 +143,80 @@ export default function ThreadView() {
 
   const handleSubmitComment = async () => {
     if (isSubmitDisabled) return;
-  
+
     const commentData = {
-        commentText: commentText,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        publicSpoiler: isChecked,
-        dislikes: 0,
-        likes: 0,
-        userId: user.user?.uid,
-        username: user.user?.username,
-        flags: 0,
-        episodeId: episodeNumber,
+      commentText: commentText,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      publicSpoiler: isChecked,
+      dislikes: 0,
+      likes: 0,
+      userId: user.user?.uid,
+      username: user.user?.username,
+      flags: 0,
+      episodeId: episodeNumber,
+      type: 0
     };
-  
+
     const userSpecificData = {
-      ...commentData,  
+      ...commentData,
       userSpoiler: false,
       commentLiked: false,
       commentDisliked: false
     };
-  
+
     try {
-        // Generate a unique comment ID
-        const commentId = firebase.firestore().collection('media').doc(mediaData.id).collection('comments').doc().id;
-  
-        // Start a batch to write both to media comments and userComments
-        const batch = firebase.firestore().batch();
-  
-        // Reference to the media comments collection
-        const mediaCommentRef = firebase.firestore()
-            .collection('media')
-            .doc(mediaData.id)
-            .collection('comments')
-            .doc(commentId);
-  
-        // Reference to the userComments collection
-        const userCommentRef = firebase.firestore()
-          .collection('userComments')
-          .doc(mediaData.id)
-          .collection(user.user!.uid)
-          .doc(commentId);
-  
-        // Add to media comments
-        batch.set(mediaCommentRef, { ...commentData, id: commentId });
-  
-        // Add to userComments
-        batch.set(userCommentRef, userSpecificData);
-  
-        await batch.commit();
-  
-        setModalVisible(false);
-        setCommentText('');
-        setIsChecked(false);
-  
-        // Fetch updated comments after submission
-        const commentsRef = firebase.firestore()
-            .collection('media')
-            .doc(mediaData.id)
-            .collection('comments')
-            .where('episodeId', '==', episodeNumber)
-            .orderBy('timestamp');
-  
-        const snapshot = await commentsRef.get();
-        const commentsData: any[] = [];
-  
-        snapshot.forEach((doc) => {
-            commentsData.push({ id: doc.id, ...doc.data() });
-        });
-        setComments(commentsData);
-  
+      // Generate a unique comment ID
+      const commentId = firebase.firestore().collection('media').doc(mediaData.id).collection('comments').doc().id;
+
+      // Start a batch to write both to media comments and userComments
+      const batch = firebase.firestore().batch();
+
+      // Reference to the media comments collection
+      const mediaCommentRef = firebase.firestore()
+        .collection('media')
+        .doc(mediaData.id)
+        .collection('comments')
+        .doc(commentId);
+
+      // Reference to the userComments collection
+      const userCommentRef = firebase.firestore()
+        .collection('userComments')
+        .doc(mediaData.id)
+        .collection(user.user!.uid)
+        .doc(commentId);
+
+      // Add to media comments
+      batch.set(mediaCommentRef, { ...commentData, id: commentId });
+
+      // Add to userComments
+      batch.set(userCommentRef, userSpecificData);
+
+      await batch.commit();
+
+      setModalVisible(false);
+      setCommentText('');
+      setIsChecked(false);
+
+      // Fetch updated comments after submission
+      const commentsRef = firebase.firestore()
+        .collection('media')
+        .doc(mediaData.id)
+        .collection('comments')
+        .where('episodeId', '==', episodeNumber)
+        .orderBy('timestamp');
+
+      const snapshot = await commentsRef.get();
+      const commentsData: any[] = [];
+
+      snapshot.forEach((doc) => {
+        commentsData.push({ id: doc.id, ...doc.data() });
+      });
+      setComments(commentsData);
+
     } catch (error) {
-        console.error('Error submitting comment: ', error);
+      console.error('Error submitting comment: ', error);
     }
-};
+  };
 
   const handleCloseModal = () => {
     setCommentText('');
@@ -241,14 +244,14 @@ export default function ThreadView() {
       {comments.length > 0 && (
         <PostCommentButton onCreateComment={handleCreateComment} />
       )}
-      
+
       <View style={styles.scrollContainer}>
         {comments.length === 0 ? (
           <NoCommentsView onCreateComment={handleCreateComment} />
         ) : (
           <FlatList
             data={comments}
-            renderItem={({ item }) => <ThreadCard key={item.id} mediaId={mediaData.id} comment={item} />}
+            renderItem={({ item }) => <CommentCard key={item.id} mediaId={mediaData.id} comment={item} replyComment={false} />}
             keyExtractor={(item) => item.id}
           />
         )}
@@ -307,6 +310,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: BackgroundColor,
+    justifyContent: 'center'
   },
   noCommentsContainer: {
     flex: 1,
@@ -347,6 +351,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
+
   },
   modalContainer: {
     flex: 1,
@@ -403,7 +408,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    
+
   },
   closeModalButton: {
     marginBottom: 30,
@@ -411,7 +416,4 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row'
   },
-  test: {
-    marginBottom: 30
-  }
 });

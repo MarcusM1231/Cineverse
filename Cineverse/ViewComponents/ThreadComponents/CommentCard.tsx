@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image, TouchableWithoutFeedback, Alert, Dimensions  } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, TouchableWithoutFeedback, Alert, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Comment } from '../../Data/Comment';
@@ -6,11 +6,13 @@ import firebase from 'firebase/compat';
 import { useUser } from "../../Data/UserContext";
 import { Menu, Divider } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import debounce from 'lodash/debounce';
 
-interface ThreadCardProps {
+interface CommentCardProps {
     comment: Comment;
     mediaId: string;
+    replyComment: boolean;
 }
 
 interface ProfileInfoProps {
@@ -20,8 +22,6 @@ interface ProfileInfoProps {
 
 const PrimaryColor = '#013b3b'
 const ThreadColor = '#008080'
-// These will be removed later. just placeholder values
-const numberOfReplies = 20;
 
 const ProfileInfo: React.FC<ProfileInfoProps> = ({ profileUsername, userId }) => {
     const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -31,9 +31,9 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profileUsername, userId }) =>
         const fetchProfileImage = async () => {
             try {
                 const imageRef = firebase.storage().ref().child(`profileImages/${userId}`);
-        
+
                 const imageUrl = await imageRef.getDownloadURL();
-        
+
                 if (imageUrl) {
                     setProfileImage(imageUrl);
                 } else {
@@ -74,8 +74,9 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profileUsername, userId }) =>
 };
 
 // Displays the text of the comment
-const CommentText = ({ comment, publicSpoiler, isLoading, userSpoiler, user }: 
+const CommentText = ({ comment, publicSpoiler, isLoading, userSpoiler, user }:
     { comment: Comment, publicSpoiler: boolean, isLoading: boolean, userSpoiler: boolean, user: any }) => {
+
     // Determine if the comment text should be blurred
     const showBlur = useMemo(() => {
         return ((publicSpoiler || userSpoiler) && user?.uid !== comment.userId) || isLoading;
@@ -90,21 +91,71 @@ const CommentText = ({ comment, publicSpoiler, isLoading, userSpoiler, user }:
     );
 };
 
-const ViewReplies = () => {
+const ViewReplies = ({ replies, mediaId, orginalComment }: { replies: any, mediaId: string, orginalComment: Comment }) => {
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
+    const ShowFullCommentView = () => {
+        navigation.navigate('FullCommentView', { mediaId, orginalComment });
+    }
     return (
         <View style={styles.repliesContainer}>
-            <TouchableOpacity>
-                <Text style={styles.repliesText}>Show {numberOfReplies} Replies...</Text>
+            <TouchableOpacity onPress={ShowFullCommentView}>
+                <Text style={styles.repliesText}>Show {replies.length} Replies...</Text>
             </TouchableOpacity>
         </View>
     )
 }
 
-const CommentVotes = ({ userLiked, userDisliked, mediaId, comment, user, setUserLiked, setUserDisliked }: { userLiked: boolean, userDisliked: boolean, mediaId: string, comment: any, user: any, setUserLiked: any, setUserDisliked: any }) => {
+export const CommentVotes = ({ userLiked, userDisliked, mediaId, comment, user, setUserLiked, setUserDisliked }: { userLiked: boolean, userDisliked: boolean, mediaId: string, comment: any, user: any, setUserLiked: any, setUserDisliked: any }) => {
     const [likes, setLikes] = useState(comment.likes);
     const [dislikes, setDisLikes] = useState(comment.dislikes);
     const [buttonDisabled, setButtonDisabled] = useState(false);
 
+    useEffect(() => {
+        // Real-time listener for comment updates
+
+        let mediaRef
+        if (comment.type === 0) {
+            mediaRef = firebase.firestore()
+                .collection('media')
+                .doc(mediaId)
+                .collection('comments')
+                .doc(comment.id);
+        } else {
+            mediaRef = firebase.firestore()
+                .collection('media')
+                .doc(mediaId)
+                .collection('comments')
+                .doc(comment.orginalCommentId)
+                .collection('replies')
+                .doc(comment.id);
+        }
+
+        const unsubscribe = mediaRef.onSnapshot(async (doc) => {
+            const commentData = doc.data();
+            if (commentData) {
+                setLikes(commentData.likes);
+                setDisLikes(commentData.dislikes);
+
+                // Check if the current user has liked or disliked the comment
+                const userCommentRef = firebase.firestore()
+                    .collection('userComments')
+                    .doc(mediaId)
+                    .collection(user!.uid)
+                    .doc(comment.id);
+
+                const userCommentDoc = await userCommentRef.get();
+                const userCommentData = userCommentDoc.data();
+
+                if (userCommentData) {
+                    setUserLiked(userCommentData.commentLiked);
+                    setUserDisliked(userCommentData.commentDisliked);
+                }
+            }
+        });
+
+        return () => unsubscribe();
+    }, [mediaId, comment.id, user, setUserLiked, setUserDisliked]);
 
     const updateUserComment = async (liked: boolean, disliked: boolean) => {
         const userCommentRef = firebase.firestore()
@@ -120,29 +171,51 @@ const CommentVotes = ({ userLiked, userDisliked, mediaId, comment, user, setUser
     };
 
     const updateMediaComment = async (likeChange: number, dislikeChange: number) => {
-        const mediaRef = firebase.firestore()
-            .collection('media')
-            .doc(mediaId)
-            .collection('comments')
-            .doc(comment.id);
+        let mediaRef;
+        if (comment.type === 0) {
+            mediaRef = firebase.firestore()
+                .collection('media')
+                .doc(mediaId)
+                .collection('comments')
+                .doc(comment.id);
+        } else {
+            mediaRef = firebase.firestore()
+                .collection('media')
+                .doc(mediaId)
+                .collection('comments')
+                .doc(comment.orginalCommentId)
+                .collection('replies')
+                .doc(comment.id);
+        }
 
         await mediaRef.update({
             likes: firebase.firestore.FieldValue.increment(likeChange),
             dislikes: firebase.firestore.FieldValue.increment(dislikeChange)
         });
-
     };
 
-    // value: true = liked | false = disliked
     const votePressed = async (value: boolean) => {
         setButtonDisabled(true);
         try {
-            // Fetch the latest comment data from Firestore
-            const mediaRef = firebase.firestore()
-                .collection('media')
-                .doc(mediaId)
-                .collection('comments')
-                .doc(comment.id);
+
+            let mediaRef;
+
+            if (comment.type === 0) {
+                mediaRef = firebase.firestore()
+                    .collection('media')
+                    .doc(mediaId)
+                    .collection('comments')
+                    .doc(comment.id);
+            } else {
+                mediaRef = firebase.firestore()
+                    .collection('media')
+                    .doc(mediaId)
+                    .collection('comments')
+                    .doc(comment.orginalCommentId)
+                    .collection('replies')
+                    .doc(comment.id);
+            }
+
 
             const commentSnapshot = await mediaRef.get();
             const commentData = commentSnapshot.data();
@@ -208,24 +281,34 @@ const CommentVotes = ({ userLiked, userDisliked, mediaId, comment, user, setUser
         <View style={styles.votesContainer}>
             <View style={styles.votesContent}>
                 <TouchableOpacity onPress={() => { debouncedVotePressed(true) }} disabled={buttonDisabled}>
-                    <Ionicons name='chevron-up-circle' style={[styles.votesIcon, { color: userLiked ? ThreadColor : "white", }]} />
+                    <Ionicons
+                        name='chevron-up-circle'
+                        style={[styles.votesIcon, { color: userLiked ? ThreadColor : "white", }]}
+                    />
                 </TouchableOpacity>
                 <Text style={styles.votesNumber}>{likes}</Text>
             </View>
 
             <View style={styles.votesContent}>
                 <TouchableOpacity onPress={() => { debouncedVotePressed(false) }} disabled={buttonDisabled}>
-                    <Ionicons name='chevron-down-circle' style={[styles.votesIcon, { color: userDisliked ? '#ad1c05' : "white", }]} />
+                    <Ionicons
+                        name='chevron-down-circle'
+                        style={[styles.votesIcon, { color: userDisliked ? '#ad1c05' : "white", }]}
+                    />
                 </TouchableOpacity>
                 <Text style={styles.votesNumber}>{dislikes}</Text>
             </View>
         </View>
-    )
-}
+    );
+};
+
 
 //Displays ellipsis button which will display more options such as block, hide, etc
-const EllipsisButton = ({ comment, spoilerVisible, setSpoilerVisible, mediaId, userSpoiler, setUserSpoiler, user }:
-    { comment: Comment, spoilerVisible: boolean, setSpoilerVisible: React.Dispatch<React.SetStateAction<boolean>>, mediaId: string, userSpoiler: boolean, setUserSpoiler: React.Dispatch<React.SetStateAction<boolean>>, user: any }) => {
+const EllipsisButton = ({ comment, spoilerVisible, setSpoilerVisible, mediaId, userSpoiler, setUserSpoiler, user, replyComment }:
+    {
+        comment: Comment, spoilerVisible: boolean, setSpoilerVisible: React.Dispatch<React.SetStateAction<boolean>>,
+        mediaId: string, userSpoiler: boolean, setUserSpoiler: React.Dispatch<React.SetStateAction<boolean>>, user: any, replyComment: boolean
+    }) => {
     const [menuVisible, setMenuVisible] = useState(false);
     const [spoilerText, setSpoilerText] = useState('Show Spoiler');
 
@@ -248,7 +331,6 @@ const EllipsisButton = ({ comment, spoilerVisible, setSpoilerVisible, mediaId, u
             { cancelable: false }
         );
     };
-
 
     // Hide/Show spoiler that was marked by author
     const showAndHideSpoilerPressed = () => {
@@ -303,24 +385,36 @@ const EllipsisButton = ({ comment, spoilerVisible, setSpoilerVisible, mediaId, u
         closeMenu()
         if (user.uid === comment.userId) {
             try {
-                // Reference to the comment in the media collection
-                const mediaCommentRef = firebase.firestore()
-                    .collection('media')
-                    .doc(mediaId)
-                    .collection('comments')
-                    .doc(comment.id);
 
-                // Reference to the comment in the user's userComments subcollection
-                const userCommentRef = firebase.firestore()
-                    .collection('userComments')
-                    .doc(mediaId)
-                    .collection(user!.uid)
-                    .doc(comment.id);
+                if (!replyComment) {
+                    // Reference to the comment in the media collection
+                    const mediaCommentRef = firebase.firestore()
+                        .collection('media')
+                        .doc(mediaId)
+                        .collection('comments')
+                        .doc(comment.id);
 
-                // Delete the comment from both collections
-                await mediaCommentRef.delete();
-                await userCommentRef.delete();
+                    // Reference to the comment in the user's userComments subcollection
+                    const userCommentRef = firebase.firestore()
+                        .collection('userComments')
+                        .doc(mediaId)
+                        .collection(user!.uid)
+                        .doc(comment.id);
 
+                    // Delete the comment from both collections
+                    await mediaCommentRef.delete();
+                    await userCommentRef.delete();
+                } else {
+                    const mediaCommentRef = firebase.firestore()
+                        .collection('media')
+                        .doc(mediaId)
+                        .collection('comments')
+                        .doc(comment.orginalCommentId)
+                        .collection('replies')
+                        .doc(comment.id);
+
+                    await mediaCommentRef.delete();
+                }
                 console.log("Comment deleted successfully");
             } catch (error) {
                 console.error("Error deleting comment: ", error);
@@ -392,18 +486,25 @@ const EllipsisButton = ({ comment, spoilerVisible, setSpoilerVisible, mediaId, u
     );
 };
 
-//Displays thread card with the profile picture, comments, and thread upvotes
-export default function ThreadCard({ comment, mediaId }: ThreadCardProps) {
+export default function CommentCard({ comment, mediaId, replyComment }: CommentCardProps) {
     const [spoilerVisible, setSpoilerVisible] = useState(!comment.publicSpoiler);
     const [userSpoiler, setUserSpoiler] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(true);
     const [userLiked, setUserLiked] = useState(false);
     const [userDisliked, setUserDisliked] = useState(false);
+    const [replies, setReplies] = useState<any>([])
+
     const userContext = useUser();
 
-    // Fetch user-specific spoiler data when the component mounts
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
+    const ShowFullCommentView = () => {
+        const orginalComment = comment
+        navigation.navigate('FullCommentView', { mediaId, orginalComment });
+    }
+
     useEffect(() => {
-        const fetchUserSpoiler = async () => {
+        const fetchUserComments = async () => {
             try {
                 const user = firebase.auth().currentUser;
                 if (user?.uid) {
@@ -425,17 +526,39 @@ export default function ThreadCard({ comment, mediaId }: ThreadCardProps) {
                     }
                 }
             } catch (error) {
-                console.error("Error fetching user spoiler data: ", error);
+                console.error("Error fetching user data: ", error);
             } finally {
                 setIsLoading(false);
             }
         };
 
-        fetchUserSpoiler();
+        const repliesRef = firebase
+            .firestore()
+            .collection('media')
+            .doc(mediaId)
+            .collection('comments')
+            .doc(comment.id)
+            .collection('replies')
+            .orderBy('timestamp', 'asc');
+
+        const unsubscribe = repliesRef.onSnapshot((snapshot) => {
+            const fetchedReplies = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            })) as Comment[];
+
+            setReplies(fetchedReplies);
+        }, (error) => {
+            console.error("Error fetching replies: ", error);
+        });
+
+        fetchUserComments();
+
+        return () => unsubscribe();
     }, [mediaId, comment.id]);
 
     return (
-        <View style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={ShowFullCommentView} disabled={replyComment}>
             <View style={styles.content}>
                 <ProfileInfo profileUsername={comment.username} userId={comment.userId} />
                 <EllipsisButton
@@ -446,6 +569,7 @@ export default function ThreadCard({ comment, mediaId }: ThreadCardProps) {
                     userSpoiler={userSpoiler}
                     setUserSpoiler={setUserSpoiler}
                     user={userContext.user}
+                    replyComment={comment.type === 1}
                 />
             </View>
             <View>
@@ -467,9 +591,13 @@ export default function ThreadCard({ comment, mediaId }: ThreadCardProps) {
                     setUserLiked={setUserLiked}
                     setUserDisliked={setUserDisliked}
                 />
-                <ViewReplies />
+                {!replyComment && replies.length > 0 ? (
+                    <>
+                        <ViewReplies mediaId={mediaId} replies={replies} orginalComment={comment} />
+                    </>
+                ) : null}
             </View>
-        </View>
+        </TouchableOpacity>
     );
 }
 
@@ -481,7 +609,8 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         flexDirection: 'column',
         borderRadius: 10,
-        marginLeft: 5
+        alignSelf: 'center',
+        zIndex: -1
     },
     content: {
         flexDirection: 'row',
@@ -515,10 +644,9 @@ const styles = StyleSheet.create({
     commentContainer: {
         marginLeft: 10,
         marginTop: 10,
-        flex: 1
     },
     commentText: {
-        color: 'white'
+        color: 'white',
     },
     repliesContainer: {
         flexDirection: 'row',
