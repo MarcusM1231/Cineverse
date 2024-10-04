@@ -7,7 +7,6 @@ import LoggedInView from './Views/MainViews/LoggedInView';
 import LoggedOutView from './Views/MainViews/LoggedOutView';
 
 import { UserProvider } from './Data/UserContext';
-import { UserCommentsProvider } from './Data/UserCommentsContext';
 import { MediaProvider } from './Data/MediaContext';
 import { PaperProvider } from 'react-native-paper';
 
@@ -37,7 +36,6 @@ export default function App() {
 
   return (
     <UserProvider>
-      <UserCommentsProvider>
         <MediaProvider>
           <PaperProvider>
           <View style={styles.container}>
@@ -48,7 +46,6 @@ export default function App() {
           </View>
           </PaperProvider>
         </MediaProvider>
-      </UserCommentsProvider>
     </UserProvider>
     
   );

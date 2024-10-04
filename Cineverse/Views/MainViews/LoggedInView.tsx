@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 
 import ExploreView from './ExploreView';
 import CardDetail from '../../ViewComponents/MediaCardComponents/CardDetail';
-import ThreadView from '../SubViews/ThreadView';
+import ThreadView from '../../ViewComponents/ThreadComponents/ThreadView';
 
 import SearchView from './SearchView';
 
@@ -19,8 +19,8 @@ import PrivacyView from '../SubViews/SettingsSubViews/PrivacyView';
 import FeedbackView from '../SubViews/SettingsSubViews/FeedbackView';
 import AboutUsView from '../SubViews/SettingsSubViews/AboutUsView';
 import ViewingProfileView from '../SubViews/ProfileSubView/ViewingProfile/ViewingProfileView';
+import FullCommentView from '../../ViewComponents/ThreadComponents/FullCommentView';
 
-//Variables
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 const ActiveIconColor = '#008080' 
@@ -52,6 +52,17 @@ function Explore() {
             headerStyle: {backgroundColor: BackgroundColor}
           }}/>
 
+        <Stack.Screen name='FullCommentView' component={FullCommentView} 
+          options={{
+            title:'',
+            headerTintColor: InactiveIconColor,
+            headerStyle: { 
+              backgroundColor: BackgroundColor, 
+            },
+            // headerShown: false,
+            // presentation: 'modal',
+          }}/>
+
         <Stack.Screen name='ViewingProfileView' component={ViewingProfileView}
           
           options={{
@@ -61,7 +72,7 @@ function Explore() {
           }}/>
 
           <Stack.Screen name='SettingsView' component={SettingsView} 
-           options={({ navigation }) => ({
+           options={() => ({
             title: 'Settings',
             headerTintColor: InactiveIconColor,
             headerStyle: { backgroundColor: BackgroundColor },
@@ -90,11 +101,12 @@ function Explore() {
           options={{
             title: 'Profile',
             headerTitleStyle: {color: InactiveIconColor},
-            headerStyle: {backgroundColor: BackgroundColor}
+            headerStyle: {backgroundColor: BackgroundColor},
+            
             }}/>
 
         <Stack.Screen name='SettingsView' component={SettingsView} 
-           options={({ navigation }) => ({
+           options={() => ({
             title: 'Settings',
             headerTintColor: InactiveIconColor,
             headerStyle: { backgroundColor: BackgroundColor },
