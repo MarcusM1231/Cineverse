@@ -36,7 +36,6 @@ const ReplyContainerView = ({ orginalComment, mediaId }: { orginalComment: Comme
             bottomSheetRef.current?.snapToIndex(1);
 
             textInputRef.current.blur();
-
         }
     };
 
@@ -111,7 +110,6 @@ const ReplyContainerView = ({ orginalComment, mediaId }: { orginalComment: Comme
             snapPoints={snapPoints}
             backgroundStyle={{ backgroundColor: '#1a1919' }}
             handleIndicatorStyle={{ backgroundColor: PrimaryColor, }}
-
         >
             <View style={styles.textInputContainer}>
                 <TextInput
@@ -177,21 +175,23 @@ export default function FullCommentView() {
 
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: BackgroundColor }}>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View style={{ flex: 1 }}>
-                    <CommentCard mediaId={mediaId} comment={orginalComment} replyComment={true} />
-                    <View style={styles.horizontalLine}></View>
-                    <FlatList
-                        data={replies}
-                        renderItem={({ item }) => <CommentCard key={item.id} mediaId={mediaId} comment={item} replyComment={true} />}
-                        keyExtractor={(item) => item.id}
-
-                        contentContainerStyle={{ paddingBottom: 150 }}
-                    />
-                    <ReplyContainerView orginalComment={orginalComment} mediaId={mediaId} />
-                </View>
-            </TouchableWithoutFeedback>
-
+            <View style={{ flex: 1 }}>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <View>
+                        <CommentCard mediaId={mediaId} comment={orginalComment} replyComment={true} />
+                        <View style={styles.horizontalLine}></View>
+                    </View>
+                </TouchableWithoutFeedback>
+                
+                <FlatList
+                    data={replies}
+                    renderItem={({ item }) => <CommentCard key={item.id} mediaId={mediaId} comment={item} replyComment={true} />}
+                    keyExtractor={(item) => item.id}
+                    contentContainerStyle={{ paddingBottom: 150 }}
+                />
+                
+                <ReplyContainerView orginalComment={orginalComment} mediaId={mediaId} />
+            </View>
         </GestureHandlerRootView>
     );
 }
