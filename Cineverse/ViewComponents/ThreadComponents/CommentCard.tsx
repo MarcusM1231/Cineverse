@@ -15,22 +15,17 @@ interface CommentCardProps {
     replyComment: boolean;
 }
 
-interface ProfileInfoProps {
-    profileUsername: string;
-    userId: string;
-}
-
 const PrimaryColor = '#013b3b'
 const ThreadColor = '#008080'
 
-const ProfileInfo: React.FC<ProfileInfoProps> = ({ profileUsername, userId }) => {
+const ProfileInfo = ({ comment, userId }: { comment: Comment, userId: string }) => {
     const [profileImage, setProfileImage] = useState<string | null>(null);
     const navigation = useNavigation<any>();
 
     useEffect(() => {
         const fetchProfileImage = async () => {
             try {
-                const imageRef = firebase.storage().ref().child(`profileImages/${userId}`);
+                const imageRef = firebase.storage().ref().child(`profileImages/${comment.userId}`);
 
                 const imageUrl = await imageRef.getDownloadURL();
 
@@ -53,11 +48,11 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profileUsername, userId }) =>
         };
 
         fetchProfileImage();
-    }, [userId]);
+    }, [comment.userId]);
 
     const navigateToProfile = useCallback(() => {
-        navigation.navigate('ViewingProfileView', { userId });
-    }, [navigation, userId]);
+        navigation.navigate('ViewingProfileView', { userId: comment.userId });
+    }, [navigation, comment.userId]);
 
     return (
         <View style={styles.profileContainer}>
@@ -67,8 +62,13 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profileUsername, userId }) =>
                 <Ionicons name='person' size={20} style={styles.profileImage} color={'white'} />
             )}
             <TouchableOpacity onPress={navigateToProfile}>
-                <Text style={styles.profileUsername}>{profileUsername}</Text>
+                <Text style={styles.profileUsername}>{comment.username}</Text>
             </TouchableOpacity>
+
+            {comment.userId == userId ? (
+                <Ionicons name='star-outline' size={15} color={'gold'} />
+            ) : null}
+
         </View>
     );
 };
@@ -77,6 +77,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({ profileUsername, userId }) =>
 const CommentText = ({ comment, publicSpoiler, isLoading, userSpoiler, user }:
     { comment: Comment, publicSpoiler: boolean, isLoading: boolean, userSpoiler: boolean, user: any }) => {
 
+    const replyComment = comment.type === 0;
     // Determine if the comment text should be blurred
     const showBlur = useMemo(() => {
         return ((publicSpoiler || userSpoiler) && user?.uid !== comment.userId) || isLoading;
@@ -84,7 +85,7 @@ const CommentText = ({ comment, publicSpoiler, isLoading, userSpoiler, user }:
 
     return (
         <View style={styles.commentContainer}>
-            <Text numberOfLines={3} ellipsizeMode="tail" style={[styles.commentText, showBlur && styles.commentTextBlur]}>
+            <Text numberOfLines={replyComment ? 3 : undefined} ellipsizeMode="tail" style={[styles.commentText, showBlur && styles.commentTextBlur]}>
                 {comment.commentText}
             </Text>
         </View>
@@ -560,7 +561,7 @@ export default function CommentCard({ comment, mediaId, replyComment }: CommentC
     return (
         <TouchableOpacity style={styles.container} onPress={ShowFullCommentView} disabled={replyComment}>
             <View style={styles.content}>
-                <ProfileInfo profileUsername={comment.username} userId={comment.userId} />
+                <ProfileInfo comment={comment} userId={userContext.user!.uid} />
                 <EllipsisButton
                     comment={comment}
                     spoilerVisible={spoilerVisible}
@@ -634,7 +635,8 @@ const styles = StyleSheet.create({
         overflow: 'hidden'
     },
     profileUsername: {
-        margin: 10,
+        marginLeft: 10,
+        marginRight: 5,
         color: 'white',
         fontWeight: 'bold',
         fontSize: 15,

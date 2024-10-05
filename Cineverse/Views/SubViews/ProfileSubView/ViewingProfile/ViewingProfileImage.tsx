@@ -30,6 +30,7 @@ export default function ViewingProfileImage({userData} : {userData : any}) {
                 setProfileImage(userData?.profileImage);
             } catch (error) {
                 setProfileImage('');
+                console.log("errorrrrr")
             }
         }
     };

@@ -1,5 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard, FlatList, Modal, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard, FlatList } from 'react-native';
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Comment } from '../../Data/Comment';
 import { useRoute } from '@react-navigation/native';
@@ -24,7 +23,7 @@ const ReplyContainerView = ({ orginalComment, mediaId }: { orginalComment: Comme
 
     // Snap points based on focus state
     const snapPoints = useMemo(() => {
-        return ['5%', '20%', '50%', '90%'];
+        return ['5%', '10%', '50%', '90%'];
     }, []);
 
     const handleInputFocus = () => {
@@ -84,7 +83,6 @@ const ReplyContainerView = ({ orginalComment, mediaId }: { orginalComment: Comme
                 .doc(commentId);
 
             await userCommentRef.set(userSpecificData);
-
 
             handleTextChange('');
             setIsChecked(false);
@@ -182,14 +180,14 @@ export default function FullCommentView() {
                         <View style={styles.horizontalLine}></View>
                     </View>
                 </TouchableWithoutFeedback>
-                
+
                 <FlatList
                     data={replies}
                     renderItem={({ item }) => <CommentCard key={item.id} mediaId={mediaId} comment={item} replyComment={true} />}
                     keyExtractor={(item) => item.id}
                     contentContainerStyle={{ paddingBottom: 150 }}
                 />
-                
+
                 <ReplyContainerView orginalComment={orginalComment} mediaId={mediaId} />
             </View>
         </GestureHandlerRootView>
@@ -201,12 +199,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: BackgroundColor,
     },
-
     postCommentButton: {
         justifyContent: 'center',
         alignItems: 'center',
         color: 'white',
-        padding: 20
+        padding: 20,
     },
     text: {
         color: 'white',
@@ -217,7 +214,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 10,
         borderRadius: 20,
-        backgroundColor: PrimaryColor,
+        backgroundColor: PrimaryColor
     },
     disabledTextContainer: {
         flexDirection: 'row',
@@ -243,7 +240,8 @@ const styles = StyleSheet.create({
         height: 200,
         padding: 10,
         color: 'white',
-        borderRadius: 20
+        borderRadius: 20,
+        marginTop: 20
 
     },
     textInputContainer: {
