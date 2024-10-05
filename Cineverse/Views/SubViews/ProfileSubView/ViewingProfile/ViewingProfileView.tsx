@@ -5,7 +5,8 @@ import { User } from '../../../../Data/User';
 
 
 export default function ViewingProfileView({route} : {route: any}) {
-    const { userId } = route.params || {};
+    const { userId } = route.params as {userId: string}
+    console.log("UserId: ", userId)
     return (
       <View style={styles.container}>
         <ProfileHeaderView userId={userId} />

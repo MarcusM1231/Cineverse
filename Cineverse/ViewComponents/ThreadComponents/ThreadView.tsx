@@ -11,6 +11,7 @@ import CommentCard from './CommentCard';
 import Checkbox from 'expo-checkbox';
 import { useUser } from "../../Data/UserContext"
 import ThreadBubble from './ThreadBubble';
+import { useNavigation } from '@react-navigation/native';
 
 
 const PrimaryColor = '#013b3b'
@@ -32,7 +33,7 @@ const NoCommentsView = ({ onCreateComment }: { onCreateComment: () => void }) =>
   );
 };
 
-const PostCommentButton = ({ onCreateComment }: { onCreateComment: () => void }) => {
+const PostCommentButton = ({ onCreateComment, mediaData }: { onCreateComment: () => void, mediaData: Media }) => {
   return (
     <View style={styles.buttonContainer}>
       <TouchableOpacity style={styles.createCommentButton} onPress={onCreateComment}>
@@ -83,8 +84,8 @@ const ThreadViewFooter = React.memo(({ mediaData, currentEpisode }: { mediaData:
   );
 });
 
-
 export default function ThreadView() {
+  const navigation = useNavigation();
   const route = useRoute();
   const { mediaData, episodeNumber } = route.params as { mediaData: Media, episodeNumber: number };
 
@@ -98,6 +99,10 @@ export default function ThreadView() {
   const user = useUser();
 
   useEffect(() => {
+
+    if (mediaData.title) {
+      navigation.setOptions({ title: mediaData.title });
+    }
     const fetchComments = () => {
       const commentsRef = firebase.firestore()
         .collection('media')
@@ -242,9 +247,8 @@ export default function ThreadView() {
   return (
     <View style={styles.container}>
       {comments.length > 0 && (
-        <PostCommentButton onCreateComment={handleCreateComment} />
+        <PostCommentButton onCreateComment={handleCreateComment} mediaData={mediaData} />
       )}
-
       <View style={styles.scrollContainer}>
         {comments.length === 0 ? (
           <NoCommentsView onCreateComment={handleCreateComment} />
@@ -415,5 +419,5 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: 'row'
-  },
+  }
 });
