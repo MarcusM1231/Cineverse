@@ -1,13 +1,14 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image, TouchableWithoutFeedback, Alert, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Comment } from '../../Data/Comment';
-import firebase from 'firebase/compat';
-import { useUser } from "../../Data/UserContext";
+import { Comment } from '../../../Data/Comment';
+import firebase from '../../../firebase/firebaseConfig';
+import { useUser } from "../../../Data/UserContext";
 import { Menu, Divider } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import debounce from 'lodash/debounce';
+import React from 'react';
 
 interface CommentCardProps {
     comment: Comment;
@@ -74,8 +75,8 @@ const ProfileInfo = ({ comment, userId }: { comment: Comment, userId: string }) 
 };
 
 // Displays the text of the comment
-const CommentText = ({ comment, publicSpoiler, isLoading, userSpoiler, user }:
-    { comment: Comment, publicSpoiler: boolean, isLoading: boolean, userSpoiler: boolean, user: any }) => {
+const CommentText = ({ comment, publicSpoiler, isLoading, userSpoiler, user, setSpoilerVisible }:
+    { comment: Comment, publicSpoiler: boolean, isLoading: boolean, userSpoiler: boolean, user: any, setSpoilerVisible: React.Dispatch<React.SetStateAction<boolean>> }) => {
 
     const replyComment = comment.type === 0;
     // Determine if the comment text should be blurred
@@ -83,16 +84,40 @@ const CommentText = ({ comment, publicSpoiler, isLoading, userSpoiler, user }:
         return ((publicSpoiler || userSpoiler) && user?.uid !== comment.userId) || isLoading;
     }, [publicSpoiler, userSpoiler, user, comment, isLoading]);
 
+    const handleSpoilerPress = () => {
+        Alert.alert(
+            'Show Spoiler',
+            'This comment contains potential spoilers. Are you sure you want to view it?',
+            [
+                {
+                    text: 'Yes',
+                    onPress: () => setSpoilerVisible(true),
+                },
+                {
+                    text: 'No',
+                },
+            ],
+            { cancelable: false }
+        );
+    };
+
     return (
         <View style={styles.commentContainer}>
-            <Text numberOfLines={replyComment ? 3 : undefined} ellipsizeMode="tail" style={[styles.commentText, showBlur && styles.commentTextBlur]}>
+            {!showBlur ? (
+                <Text numberOfLines={replyComment ? 3 : undefined} ellipsizeMode="tail" style={[styles.commentText, showBlur && styles.commentTextBlur]}>
                 {comment.commentText}
             </Text>
+            ): (
+                <TouchableOpacity style={styles.test} onPress={handleSpoilerPress}>
+                    <Text style={[styles.commentText]}>Spoiler!!</Text>
+                </TouchableOpacity>
+            )}
+                
         </View>
     );
 };
 
-const ViewReplies = ({ replies, mediaId, orginalComment }: { replies: any, mediaId: string, orginalComment: Comment }) => {
+const ViewReplies = ({ replies, mediaId, orginalComment, replyComment }: { replies: any, mediaId: string, orginalComment: Comment, replyComment: boolean }) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     const ShowFullCommentView = () => {
@@ -101,7 +126,12 @@ const ViewReplies = ({ replies, mediaId, orginalComment }: { replies: any, media
     return (
         <View style={styles.repliesContainer}>
             <TouchableOpacity onPress={ShowFullCommentView}>
-                <Text style={styles.repliesText}>Show {replies.length} Replies...</Text>
+                {replies.length > 0 && !replyComment ? (
+                    <Text style={styles.repliesText}>Show {replies.length} Replies...</Text>
+                ): replies.length < 1 && !replyComment ?  (
+                    <Text style={styles.repliesText}>Reply to comment</Text>
+                ): null }
+                
             </TouchableOpacity>
         </View>
     )
@@ -499,10 +529,10 @@ export default function CommentCard({ comment, mediaId, replyComment }: CommentC
 
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-    const ShowFullCommentView = () => {
-        const orginalComment = comment
-        navigation.navigate('FullCommentView', { mediaId, orginalComment });
-    }
+    // const ShowFullCommentView = () => {
+    //     const orginalComment = comment
+    //     navigation.navigate('FullCommentView', { mediaId, orginalComment });
+    // }
 
     useEffect(() => {
         const fetchUserComments = async () => {
@@ -559,7 +589,7 @@ export default function CommentCard({ comment, mediaId, replyComment }: CommentC
     }, [mediaId, comment.id]);
 
     return (
-        <TouchableOpacity style={styles.container} onPress={ShowFullCommentView} disabled={replyComment}>
+        <View style={styles.container}>
             <View style={styles.content}>
                 <ProfileInfo comment={comment} userId={userContext.user!.uid} />
                 <EllipsisButton
@@ -580,6 +610,7 @@ export default function CommentCard({ comment, mediaId, replyComment }: CommentC
                     isLoading={isLoading}
                     userSpoiler={userSpoiler}
                     user={userContext.user}
+                    setSpoilerVisible={setSpoilerVisible}
                 />
             </View>
             <View style={styles.commentFooter}>
@@ -592,13 +623,14 @@ export default function CommentCard({ comment, mediaId, replyComment }: CommentC
                     setUserLiked={setUserLiked}
                     setUserDisliked={setUserDisliked}
                 />
-                {!replyComment && replies.length > 0 ? (
+                {/* {!replyComment && replies.length > 0 ? (
                     <>
                         <ViewReplies mediaId={mediaId} replies={replies} orginalComment={comment} />
                     </>
-                ) : null}
+                ) : null} */}
+                <ViewReplies mediaId={mediaId} replies={replies} orginalComment={comment} replyComment={replyComment} />
             </View>
-        </TouchableOpacity>
+        </View>
     );
 }
 
@@ -630,7 +662,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         width: 45,
         height: 40,
-        padding: 10,
         textAlign: 'center',
         overflow: 'hidden'
     },
@@ -692,13 +723,13 @@ const styles = StyleSheet.create({
     },
     commentTextBlur: {
         color: 'black',
-        left: -2000,
-        elevation: 2,
+         left: -2000,
+         elevation: 2,
         backgroundColor: 'transparent',
-        shadowOpacity: 1,
+         shadowOpacity: 1,
         shadowRadius: 4,
-        shadowColor: 'rgba(255,255,255,1)',
-        shadowOffset: { width: 2000, height: 0 },
+         shadowColor: 'rgba(255,255,255,1)',
+         shadowOffset: { width: 2000, height: 0 },
     },
     menuOption: {
         padding: 10,
@@ -717,4 +748,10 @@ const styles = StyleSheet.create({
         bottom: 0,
         backgroundColor: 'transparent',
     },
+    test: {
+        backgroundColor: PrimaryColor,
+        width: 100,
+        borderRadius: 20,
+        paddingHorizontal: 20
+    }
 });

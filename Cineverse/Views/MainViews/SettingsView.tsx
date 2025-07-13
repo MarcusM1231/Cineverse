@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation, NavigationProp  } from '@react-navigation/native';
-import firebase from 'firebase/compat';
+import firebase from '../../firebase/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserProvider, useUser } from '../../Data/UserContext';
 

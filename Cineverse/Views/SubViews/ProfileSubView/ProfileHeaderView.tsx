@@ -5,13 +5,14 @@ import ProfileCollectionsView from './ProfileCollectionsView';
 import ProfileCommentsView from './ProfileCommentsView';
 import ProfileLikesView from './ProfileLikesView';
 import ProfileImage from './ProfileImage';
-import firebase from 'firebase/compat';
+import firebase from '../../../firebase/firebaseConfig';
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { useUser } from "../../../Data/UserContext"
 import ViewingProfileImage from './ViewingProfile/ViewingProfileImage';
 import { Menu, Divider } from 'react-native-paper';
 import MenuItem from 'react-native-paper/lib/typescript/components/Menu/MenuItem';
+import React from 'react';
 
 //Variables
 const PrimaryColor = '#013b3b'

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import firebase from 'firebase/compat';
+import firebase from '../firebase/firebaseConfig';
 
 export interface Media {
     id: string;

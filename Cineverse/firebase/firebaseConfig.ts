@@ -1,11 +1,11 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
-import 'firebase/compat/storage'
-import 'firebase/compat/firestore'
+import 'firebase/compat/storage';
+import 'firebase/compat/firestore';
 import { getAnalytics } from "firebase/analytics";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as firebaseAuth from 'firebase/auth';
+//import * as firebaseAuth from 'firebase/auth';
 
 
 import { FIREBASE_API_KEY, FIREBASE_AUTH_DOMAIN, FIREBASE_DATABASE_URL, FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET, FIREBASE_MESSAGING_SENDER_ID, FIREBASE_APP_ID, FIREBASE_MEASUREMENT_ID } from '@env';
@@ -21,14 +21,9 @@ const firebaseConfig = {
   measurementId: FIREBASE_MEASUREMENT_ID
 };
 
-const reactNativePersistence = (firebaseAuth as any).getReactNativePersistence;
-
-// Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-
-// Persist Firebase auth
-export const auth = firebaseAuth.initializeAuth(app, {
-  persistence: reactNativePersistence(AsyncStorage),
-});
+// Initialize Firebase only once
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 export default firebase;

@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import firebase from 'firebase/compat';
+import firebase from '../../../firebase/firebaseConfig';
 
 import { useUser } from "../../../Data/UserContext";
 
@@ -22,7 +22,7 @@ export default function ProfileImage() {
     useEffect(() => {
         async function FetchImage() {
             const cachedImageUri = await AsyncStorage.getItem(imageKey);
-            console.log("Loading profile image from cache")
+            console.log("Loading profile image from cache" + cachedImageUri)
         if (cachedImageUri) {
             setProfileImage(cachedImageUri);
         } else {
@@ -186,9 +186,11 @@ export default function ProfileImage() {
                         </View>
                     </View>
                 ) : (
-                    <TouchableOpacity onPress={pickImage} disabled={loading}>
-                        <Ionicons name='person' style={styles.profileImage} color={'white'} />
-                    </TouchableOpacity>
+                    <View style={styles.noProfileImageContainer}>
+                        <TouchableOpacity onPress={pickImage} disabled={loading}>
+                            <Ionicons name='person' style={styles.noProfileImage} color={'white'} />
+                        </TouchableOpacity>
+                    </View>
                 )}
             </View>
         </View>
@@ -199,17 +201,26 @@ const styles = StyleSheet.create({
     profileImageContainer: {
         alignItems: 'center',
         marginBottom: 10,
-        position: 'relative'
+        position: 'relative',
     },
     profileImage: { 
-        backgroundColor: SecondaryColor,
         fontSize: 42,
         borderRadius: 20,
-        padding: 30,
-        overflow: 'hidden',
         textAlign: 'center',
-        width: 100,
-        height: 100,
+        width: 120,
+        height: 120,
+    },
+    noProfileImageContainer: {
+        backgroundColor: PrimaryColor,
+        borderRadius: 20,
+        width: 120,
+        height: 120,
+        justifyContent: 'center'
+    },
+    noProfileImage: {
+        textAlign: 'center',
+        fontSize: 42,
+        borderRadius: 20,
     },
     icon: {
         textAlign: 'center'

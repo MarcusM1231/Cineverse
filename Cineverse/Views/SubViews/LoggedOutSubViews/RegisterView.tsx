@@ -94,6 +94,7 @@ export default function RegisterView() {
         const { uid } = response.user;
 
         const initialData = {
+            email: email,
             username: username,
             followers: 0,
             following: 0,

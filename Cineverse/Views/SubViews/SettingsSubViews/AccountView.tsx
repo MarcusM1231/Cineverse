@@ -9,8 +9,8 @@ export default function AccountView() {
   var PlaceHolderEmail = "";
 
   if(user){
-    PlaceHolderUsername = user?.username;
-    PlaceHolderEmail = user?.email
+    PlaceHolderUsername = user?.user!.username;
+    PlaceHolderEmail = user?.user!.email;
   }
   
 

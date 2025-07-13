@@ -1,7 +1,7 @@
 import { StyleSheet, View, Image} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
-import firebase from 'firebase/compat';
+import firebase from '../../../../firebase/firebaseConfig';
 
 const PrimaryColor = '#013b3b'
 const SecondaryColor = '#333333'
@@ -43,7 +43,10 @@ export default function ViewingProfileImage({userData} : {userData : any}) {
                         <Image source={{ uri: profileImage }} style={styles.profileImage} />
                     </View>
                 ) : (
-                    <Ionicons name='person' style={styles.profileImage} color={'white'} />
+                    <View style={styles.noProfileImageContainer}>
+                        <Ionicons name='person' style={styles.noProfileImage} color={'white'} />
+                    </View>
+                    
                 )}
             </View>
         </View>
@@ -57,14 +60,23 @@ const styles = StyleSheet.create({
         position: 'relative'
     },
     profileImage: { 
-        backgroundColor: SecondaryColor,
         fontSize: 42,
         borderRadius: 20,
-        padding: 30,
-        overflow: 'hidden',
         textAlign: 'center',
-        width: 100,
-        height: 100,
+        width: 120,
+        height: 120,
+    },
+    noProfileImageContainer: {
+        backgroundColor: PrimaryColor,
+        borderRadius: 20,
+        width: 120,
+        height: 120,
+        justifyContent: 'center'
+    },
+    noProfileImage: {
+        textAlign: 'center',
+        fontSize: 42,
+        borderRadius: 20,
     },
     icon: {
         textAlign: 'center'

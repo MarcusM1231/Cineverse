@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet, View, ScrollView, Text, TouchableOpacity, ActivityIndicator, Modal,
-  TextInput, TouchableWithoutFeedback, Keyboard, FlatList
+  TextInput, TouchableWithoutFeedback, Keyboard, FlatList, Alert
 } from 'react-native';
-import firebase from 'firebase/compat';
+import firebase from '../../firebase/firebaseConfig';
 import { useRoute } from '@react-navigation/native';
 import { Media } from '../../Data/MediaContext';
 import { Ionicons } from '@expo/vector-icons';
-import CommentCard from './CommentCard';
+import CommentCard from './CommentCard/CommentCard';
 import Checkbox from 'expo-checkbox';
 import { useUser } from "../../Data/UserContext"
 import ThreadBubble from './ThreadBubble';
@@ -99,11 +99,11 @@ export default function ThreadView() {
   const user = useUser();
 
   useEffect(() => {
-
     if (mediaData.title) {
       navigation.setOptions({ title: mediaData.title });
     }
-    const fetchComments = () => {
+  
+    if (mediaData.id) {
       const commentsRef = firebase.firestore()
         .collection('media')
         .doc(mediaData.id)
@@ -111,8 +111,7 @@ export default function ThreadView() {
         .where('episodeId', '==', episodeNumber)
         .orderBy('timestamp')
         .limit(20);
-
-      // Use onSnapshot to listen for real-time updates
+  
       const unsubscribe = commentsRef.onSnapshot(async (snapshot) => {
         const userCommentRefs = snapshot.docs.map(doc =>
           firebase.firestore()
@@ -121,36 +120,30 @@ export default function ThreadView() {
             .collection(mediaData.id)
             .doc(doc.id)
         );
-
+  
         const userCommentSnapshots = await Promise.all(userCommentRefs.map(ref => ref.get()));
-
+  
         const commentsData = snapshot.docs.map((doc, index) => ({
           id: doc.id,
           ...doc.data(),
-          userSpoiler: userCommentSnapshots[index].exists ? userCommentSnapshots[index].data()!.userSpoiler : false,
+          userSpoiler: userCommentSnapshots[index]?.exists ? userCommentSnapshots[index].data()!.userSpoiler : false,
         }));
-
+  
         setComments(commentsData);
         setLoading(false);
       });
-
+  
       return () => unsubscribe();
-    };
-
-    if (mediaData.id) {
-      fetchComments();
     }
   }, [mediaData.id, episodeNumber, user.user?.uid]);
-
-  const handleCreateComment = () => {
-    setModalVisible(true);
-  };
-
+  
   const handleSubmitComment = async () => {
     if (isSubmitDisabled) return;
-
+  
+    //setSubmitting(true);
+  
     const commentData = {
-      commentText: commentText,
+      commentText,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       publicSpoiler: isChecked,
       dislikes: 0,
@@ -159,73 +152,179 @@ export default function ThreadView() {
       username: user.user?.username,
       flags: 0,
       episodeId: episodeNumber,
-      type: 0
+      type: 0,
     };
-
+  
     const userSpecificData = {
       ...commentData,
       userSpoiler: false,
       commentLiked: false,
-      commentDisliked: false
+      commentDisliked: false,
     };
-
+  
     try {
-      // Generate a unique comment ID
       const commentId = firebase.firestore().collection('media').doc(mediaData.id).collection('comments').doc().id;
-
-      // Start a batch to write both to media comments and userComments
+  
       const batch = firebase.firestore().batch();
-
-      // Reference to the media comments collection
+  
       const mediaCommentRef = firebase.firestore()
         .collection('media')
         .doc(mediaData.id)
         .collection('comments')
         .doc(commentId);
-
-      // Reference to the userComments collection
+  
       const userCommentRef = firebase.firestore()
         .collection('userComments')
         .doc(mediaData.id)
         .collection(user.user!.uid)
         .doc(commentId);
-
-      // Add to media comments
+  
       batch.set(mediaCommentRef, { ...commentData, id: commentId });
-
-      // Add to userComments
       batch.set(userCommentRef, userSpecificData);
-
+  
       await batch.commit();
-
+  
       setModalVisible(false);
       setCommentText('');
       setIsChecked(false);
-
-      // Fetch updated comments after submission
-      const commentsRef = firebase.firestore()
-        .collection('media')
-        .doc(mediaData.id)
-        .collection('comments')
-        .where('episodeId', '==', episodeNumber)
-        .orderBy('timestamp');
-
-      const snapshot = await commentsRef.get();
-      const commentsData: any[] = [];
-
-      snapshot.forEach((doc) => {
-        commentsData.push({ id: doc.id, ...doc.data() });
-      });
-      setComments(commentsData);
-
     } catch (error) {
       console.error('Error submitting comment: ', error);
-    }
+      Alert.alert('Submission failed', 'Please try again.');
+    } 
   };
+
+  // useEffect(() => {
+  //   if (mediaData.title) {
+  //     navigation.setOptions({ title: mediaData.title });
+  //   }
+
+  //   const fetchComments = () => {
+  //     const commentsRef = firebase.firestore()
+  //       .collection('media')
+  //       .doc(mediaData.id)
+  //       .collection('comments')
+  //       .where('episodeId', '==', episodeNumber)
+  //       .orderBy('timestamp')
+  //       .limit(20);
+
+  //     // Use onSnapshot to listen for real-time updates
+  //     const unsubscribe = commentsRef.onSnapshot(async (snapshot) => {
+  //       const userCommentRefs = snapshot.docs.map(doc =>
+  //         firebase.firestore()
+  //           .collection('userComments')
+  //           .doc(user.user?.uid)
+  //           .collection(mediaData.id)
+  //           .doc(doc.id)
+  //       );
+
+  //       const userCommentSnapshots = await Promise.all(userCommentRefs.map(ref => ref.get()));
+
+  //       const commentsData = snapshot.docs.map((doc, index) => ({
+  //         id: doc.id,
+  //         ...doc.data(),
+  //         userSpoiler: userCommentSnapshots[index].exists ? userCommentSnapshots[index].data()!.userSpoiler : false,
+  //       }));
+
+  //       setComments(commentsData);
+  //       setLoading(false);
+  //     });
+
+  //     return () => unsubscribe();
+  //   };
+
+  //   if (mediaData.id) {
+  //     fetchComments();
+  //   }
+  // }, [mediaData.id, episodeNumber, user.user?.uid]);
+
+  // const handleCreateComment = () => {
+  //   setModalVisible(true);
+  // };
+
+  // const handleSubmitComment = async () => {
+  //   if (isSubmitDisabled) return;
+
+  //   const commentData = {
+  //     commentText: commentText,
+  //     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+  //     publicSpoiler: isChecked,
+  //     dislikes: 0,
+  //     likes: 0,
+  //     userId: user.user?.uid,
+  //     username: user.user?.username,
+  //     flags: 0,
+  //     episodeId: episodeNumber,
+  //     type: 0
+  //   };
+
+  //   const userSpecificData = {
+  //     ...commentData,
+  //     userSpoiler: false,
+  //     commentLiked: false,
+  //     commentDisliked: false
+  //   };
+
+  //   try {
+  //     // Generate a unique comment ID
+  //     const commentId = firebase.firestore().collection('media').doc(mediaData.id).collection('comments').doc().id;
+
+  //     // Start a batch to write both to media comments and userComments
+  //     const batch = firebase.firestore().batch();
+
+  //     // Reference to the media comments collection
+  //     const mediaCommentRef = firebase.firestore()
+  //       .collection('media')
+  //       .doc(mediaData.id)
+  //       .collection('comments')
+  //       .doc(commentId);
+
+  //     // Reference to the userComments collection
+  //     const userCommentRef = firebase.firestore()
+  //       .collection('userComments')
+  //       .doc(mediaData.id)
+  //       .collection(user.user!.uid)
+  //       .doc(commentId);
+
+  //     // Add to media comments
+  //     batch.set(mediaCommentRef, { ...commentData, id: commentId });
+
+  //     // Add to userComments
+  //     batch.set(userCommentRef, userSpecificData);
+
+  //     await batch.commit();
+
+  //     setModalVisible(false);
+  //     setCommentText('');
+  //     setIsChecked(false);
+
+  //     // Fetch updated comments after submission
+  //     // const commentsRef = firebase.firestore()
+  //     //   .collection('media')
+  //     //   .doc(mediaData.id)
+  //     //   .collection('comments')
+  //     //   .where('episodeId', '==', episodeNumber)
+  //     //   .orderBy('timestamp');
+
+  //     // const snapshot = await commentsRef.get();
+  //     // const commentsData: any[] = [];
+
+  //     // snapshot.forEach((doc) => {
+  //     //   commentsData.push({ id: doc.id, ...doc.data() });
+  //     // });
+  //     // setComments(commentsData);
+
+  //   } catch (error) {
+  //     console.error('Error submitting comment: ', error);
+  //   }
+  // };
 
   const handleCloseModal = () => {
     setCommentText('');
     setModalVisible(false);
+  };
+
+  const handleCreateComment = () => {
+    setModalVisible(true);
   };
 
   const handleTextChange = (text: string) => {

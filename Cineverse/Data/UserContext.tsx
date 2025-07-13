@@ -1,6 +1,8 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import firebase from 'firebase/compat';
+import firebase from '../firebase/firebaseConfig'
+// import 'firebase/compat/auth';
+// import 'firebase/compat/firestore';
 import { User } from './User';
 
 interface UserContextType {

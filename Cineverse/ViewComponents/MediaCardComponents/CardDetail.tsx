@@ -221,6 +221,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         marginTop: 15,
+        justifyContent: 'center'
     },
     horizontalLine: {
         borderBottomColor: ActiveButtonColor,
