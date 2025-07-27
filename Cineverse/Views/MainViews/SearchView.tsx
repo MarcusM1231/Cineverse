@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Image } from 'react-native';
-import firebase from '../../firebase/firebaseConfig';
+import firebase from '@firebase/firebaseConfig';
 import debounce from 'lodash/debounce';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';

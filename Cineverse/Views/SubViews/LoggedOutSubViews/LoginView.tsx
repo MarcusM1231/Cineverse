@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View, ActivityIndicator, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import firebase from '../../../firebase/firebaseConfig';
-import styles from '../../../css/LoggedOutStylesheet';
+import firebase from '@firebase/firebaseConfig';
+import styles from '@css/LoggedOutStylesheet';
 
 export default function LoginView() {
   const [email, setEmail] = useState('');

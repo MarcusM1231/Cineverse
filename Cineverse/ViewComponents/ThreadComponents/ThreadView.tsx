@@ -3,14 +3,14 @@ import {
   StyleSheet, View, ScrollView, Text, TouchableOpacity, ActivityIndicator, Modal,
   TextInput, TouchableWithoutFeedback, Keyboard, FlatList, Alert
 } from 'react-native';
-import firebase from '../../firebase/firebaseConfig';
+import firebase from '@firebase/firebaseConfig';
 import { useRoute } from '@react-navigation/native';
-import { Media } from '../../Data/MediaContext';
+import { Media } from '@data/MediaContext';
 import { Ionicons } from '@expo/vector-icons';
-import CommentCard from './CommentCard/CommentCard';
+import CommentCard from '@components/ThreadComponents/CommentCard/CommentCard';
 import Checkbox from 'expo-checkbox';
-import { useUser } from "../../Data/UserContext"
-import ThreadBubble from './ThreadBubble';
+import { useUser } from "@data/UserContext"
+import ThreadBubble from '@components/ThreadComponents//ThreadBubble';
 import { useNavigation } from '@react-navigation/native';
 
 

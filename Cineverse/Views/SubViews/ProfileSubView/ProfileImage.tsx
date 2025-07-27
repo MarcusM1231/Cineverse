@@ -3,7 +3,8 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import firebase from '../../../firebase/firebaseConfig';
+import firebase from '@firebase/firebaseConfig';
+
 
 import { useUser } from "../../../Data/UserContext";
 

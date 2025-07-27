@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View} from 'react-native';
-import ProfileHeaderView from '../ProfileHeaderView';
-import { useUser } from '../../../../Data/UserContext';
-import { User } from '../../../../Data/User';
+import ProfileHeaderView from '@views/SubViews/ProfileSubView/ProfileHeaderView';
+import { useUser } from '@data/UserContext';
+import { User } from '@data/User';
 
 
 export default function ViewingProfileView({route} : {route: any}) {

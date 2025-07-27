@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import { Media } from '../../Data/MediaContext';
+import { Media } from '@data/MediaContext';
 
 type ThreadBubbleProps = {
   episodeNumber: number;

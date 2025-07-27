@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard, FlatList } from 'react-native';
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Comment } from '../../Data/Comment';
+import { Comment } from '@data/Comment';
 import { useRoute } from '@react-navigation/native';
-import CommentCard from './CommentCard/CommentCard';
+import CommentCard from '@components/ThreadComponents/CommentCard/CommentCard';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Checkbox from 'expo-checkbox';
-import firebase from '../../firebase/firebaseConfig';
-import { useUser } from '../../Data/UserContext';
+import firebase from '@firebase/firebaseConfig';
+import { useUser } from '@data/UserContext';
 
 const BackgroundColor = '#121212'
 const PrimaryColor = '#013b3b'

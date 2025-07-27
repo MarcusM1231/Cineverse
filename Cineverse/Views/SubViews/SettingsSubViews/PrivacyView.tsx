@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Switch} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useUser } from '../../../Data/UserContext';
+import { useUser } from '@data/UserContext';
 
 export default function PrivacyView() {
   const userContext = useUser();

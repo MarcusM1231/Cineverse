@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
-import HomeView from '../SubViews/ExploreSubViews/HomeView';
-import MovieView from '../SubViews/ExploreSubViews/MovieView'
-import ShowView from '../SubViews/ExploreSubViews/ShowView'
-import styles from '../../css/ExploreStylesheet'
+import HomeView from '@views/SubViews/ExploreSubViews/HomeView';
+import MovieView from '@views/SubViews/ExploreSubViews/MovieView'
+import ShowView from '@views/SubViews/ExploreSubViews/ShowView'
+import styles from '@css/ExploreStylesheet'
 
 type ButtonProp = {
   type: number;

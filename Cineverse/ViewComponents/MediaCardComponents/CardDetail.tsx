@@ -1,10 +1,10 @@
 import { Text, View, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useRoute } from '@react-navigation/native';
-import { Media } from '../../Data/MediaContext';
+import { Media } from '@data/MediaContext';
 import { ScrollView } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import ThreadBubble from "../ThreadComponents/ThreadBubble";
+import ThreadBubble from "@components/ThreadComponents/ThreadBubble";
 
 // const ActiveButtonColor = "#008080"
 const ActiveButtonColor = '#013b3b'

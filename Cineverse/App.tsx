@@ -1,13 +1,13 @@
 import { StyleSheet, View, ActivityIndicator, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { useState, useEffect } from 'react';
-import firebase from './firebase/firebaseConfig';
+import firebase from '@firebase/firebaseConfig';
 
-import LoggedInView from './Views/MainViews/LoggedInView';
-import LoggedOutView from './Views/MainViews/LoggedOutView';
+import LoggedInView from '@views/MainViews/LoggedInView';
+import LoggedOutView from '@views/MainViews/LoggedOutView';
 
-import { UserProvider } from './Data/UserContext';
-import { MediaProvider } from './Data/MediaContext';
+import { UserProvider } from '@data/UserContext';
+import { MediaProvider } from '@data/MediaContext';
 import { PaperProvider } from 'react-native-paper';
 
 const BackgroundColor = '#121212';

@@ -5,21 +5,21 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect } from 'react';
 
-import ExploreView from './ExploreView';
-import CardDetail from '../../ViewComponents/MediaCardComponents/CardDetail';
-import ThreadView from '../../ViewComponents/ThreadComponents/ThreadView';
+import ExploreView from '@views/MainViews/ExploreView';
+import CardDetail from '@components/MediaCardComponents/CardDetail';
+import ThreadView from '@components/ThreadComponents/ThreadView';
 
-import SearchView from './SearchView';
+import SearchView from '@views/MainViews/SearchView';
 
-import ProfileView from './ProfileView';
-import SettingsView from './SettingsView';
-import AccountView from '../SubViews/SettingsSubViews/AccountView';
-import NotificationsView from '../SubViews/SettingsSubViews/NotificationsView';
-import PrivacyView from '../SubViews/SettingsSubViews/PrivacyView';
-import FeedbackView from '../SubViews/SettingsSubViews/FeedbackView';
-import AboutUsView from '../SubViews/SettingsSubViews/AboutUsView';
-import ViewingProfileView from '../SubViews/ProfileSubView/ViewingProfile/ViewingProfileView';
-import FullCommentView from '../../ViewComponents/ThreadComponents/FullCommentView';
+import ProfileView from '@views/MainViews/ProfileView';
+import SettingsView from '@views/MainViews/SettingsView';
+import AccountView from '@views/SubViews/SettingsSubViews/AccountView';
+import NotificationsView from '@views/SubViews/SettingsSubViews/NotificationsView';
+import PrivacyView from '@views/SubViews/SettingsSubViews/PrivacyView';
+import FeedbackView from '@views/SubViews/SettingsSubViews/FeedbackView';
+import AboutUsView from '@views/SubViews/SettingsSubViews/AboutUsView';
+import ViewingProfileView from '@views/SubViews/ProfileSubView/ViewingProfile/ViewingProfileView';
+import FullCommentView from '@components/ThreadComponents/FullCommentView';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
