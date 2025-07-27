@@ -1,7 +1,7 @@
 import { StyleSheet, View, Image} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
-import firebase from '../../../../firebase/firebaseConfig';
+import firebase from '@firebase/firebaseConfig';
 
 const PrimaryColor = '#013b3b'
 const SecondaryColor = '#333333'

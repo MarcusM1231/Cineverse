@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View} from 'react-native';
-import ProfileHeaderView from '../SubViews/ProfileSubView/ProfileHeaderView';
-import { useUser } from '../../Data/UserContext';
+import ProfileHeaderView from '@views/SubViews/ProfileSubView/ProfileHeaderView';
+import { useUser } from '@data/UserContext';
 
 /*
 This is the Profile view, the view with all the profile

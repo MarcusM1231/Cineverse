@@ -3,5 +3,14 @@
   "compilerOptions": {
     "strict": true,
     "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@firebase/*": ["firebase/*"],
+      "@data/*": ["Data/*"],
+      "@hooks/*": ["Hooks/*"],
+      "@views/*": ["Views/*"],
+      "@components/*": ["ViewComponents/*"],
+      "@css/*": ["css/*"]
+    }
   }
 }

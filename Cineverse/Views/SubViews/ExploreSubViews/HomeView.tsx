@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import MediaCard from '../../../ViewComponents/MediaCardComponents/MediaCard';
-import ViewMoreCard from '../../../ViewComponents/MediaCardComponents/ViewMoreCard';
-import { useMedia } from '../../../Data/MediaContext';
-import { Media } from '../../../Data/MediaContext';
+import MediaCard from '@components/MediaCardComponents/MediaCard';
+import ViewMoreCard from '@components/MediaCardComponents/ViewMoreCard';
+import { useMedia } from '@data/MediaContext';
+import { Media } from '@data/MediaContext';
 
 // Props
 type MediaCategoryProps = {

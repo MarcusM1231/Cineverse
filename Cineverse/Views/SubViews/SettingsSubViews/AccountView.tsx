@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, Modal, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { useUser } from "../../../Data/UserContext"
+import { useUser } from "@data/UserContext"
 
 export default function AccountView() {
   const user = useUser()

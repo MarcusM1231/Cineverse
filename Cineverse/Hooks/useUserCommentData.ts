@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import firebase from '../firebase/firebaseConfig';
+import firebase from '@firebase/firebaseConfig';
 
 const useUserCommentData = (mediaId: string, commentId: string) => {
     const [userSpoiler, setUserSpoiler] = useState<boolean>(false);

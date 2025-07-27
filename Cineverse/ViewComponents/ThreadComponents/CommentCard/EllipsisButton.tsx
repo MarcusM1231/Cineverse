@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image, TouchableWithoutFeedback, Alert, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Comment } from '../../../Data/Comment';
-import firebase from '../../../firebase/firebaseConfig';
+import { Comment } from '@data/Comment';
+import firebase from '@firebase/firebaseConfig';
 import { Menu, Divider } from 'react-native-paper';
 import React from 'react';
 
