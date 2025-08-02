@@ -7,7 +7,7 @@ import styles from '@css/LoggedOutStylesheet';
 
 export default function LoginView() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('test123');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
