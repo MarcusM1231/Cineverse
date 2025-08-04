@@ -86,6 +86,11 @@ export default function SearchView() {
     navigation.navigate('ViewingProfileView', { userId: id });
   }, [navigation,]);
 
+  const renderEmptyComponent = () => {
+    if (query.trim() === '') return null; // show nothing if search bar is empty
+    return <Text style={styles.emptyText}>No users found.</Text>; // show message if search is typed but no users
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -104,21 +109,20 @@ export default function SearchView() {
             <TouchableOpacity onPress={() => navigateToProfile(item.uid)}>
               <View style={styles.resultItem}>
                 {item.profileImage ? (
-                <Image source={{ uri: item.profileImage }} style={styles.profileImageFound} />
-            ) : (
-                <Ionicons name='person' size={20} style={styles.profileImage} color={'white'} />
-            )}
+                  <Image source={{ uri: item.profileImage }} style={styles.profileImageFound} />
+                ) : (
+                  <Ionicons name="person" size={20} style={styles.profileImage} color="white" />
+                )}
                 <Text style={styles.resultText}>{item.username}</Text>
               </View>
             </TouchableOpacity>
           )}
-          ListEmptyComponent={<Text style={styles.emptyText}>No users found.</Text>}
+          ListEmptyComponent={renderEmptyComponent} // cleaner call here
         />
       </View>
     </TouchableWithoutFeedback>
-
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
