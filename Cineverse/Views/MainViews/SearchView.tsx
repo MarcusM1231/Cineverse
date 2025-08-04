@@ -87,8 +87,8 @@ export default function SearchView() {
   }, [navigation,]);
 
   const renderEmptyComponent = () => {
-    if (query.trim() === '') return null; // show nothing if search bar is empty
-    return <Text style={styles.emptyText}>No users found.</Text>; // show message if search is typed but no users
+    if (query.trim() === '') return null;
+    return <Text style={styles.emptyText}>No users found.</Text>; 
   };
 
   return (
@@ -117,7 +117,7 @@ export default function SearchView() {
               </View>
             </TouchableOpacity>
           )}
-          ListEmptyComponent={renderEmptyComponent} // cleaner call here
+          ListEmptyComponent={renderEmptyComponent}
         />
       </View>
     </TouchableWithoutFeedback>
